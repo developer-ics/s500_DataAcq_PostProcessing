@@ -1,0 +1,4 @@
+param_name,param_value
+start_mm,0
+length_mm,20000
+msec_per_ping,100

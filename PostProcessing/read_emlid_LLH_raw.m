@@ -1,9 +1,14 @@
 fs='20221221165017';
 fs='20230105141705';
-dirnm=['YF2Reachm2_solution_' fs '_LLH']
+if ispc
+    slash = '/';
+else
+    slash = '/';
+end
 
+dirnm=['SampleData' slash 'YF2Reachm2_solution_' fs '_LLH']
 dd=dir(dirnm)
-fn=[dirnm '\' dd(3).name]% this is before ppk processing so should agree with nmea strings
+fn=[dirnm slash dd(3).name]% this is before ppk processing so should agree with nmea strings
 T=readtable(fn,'FileType','text');
 T.date=datetime(T.Var1,'Inputformat','yyyy/MM/dd');
 T.datetime=T.date+T.Var2;

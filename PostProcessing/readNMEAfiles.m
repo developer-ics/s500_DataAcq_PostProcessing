@@ -66,7 +66,7 @@ lon(lon==0)="NaN";
 
 figure(10);clf
 plot(lon,lat,'o-')
-figure(11);clf
+figure(11);clfs
 plot(pc_time_gga,altWGS84,'.-')
 hold on
 plot(pc_time_gga,altMSL,'.-')

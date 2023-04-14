@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 # Also, the output format of the data is changed to a NumPy .npz file instead of a MATLAB .mat file.
 # You can modify the output format based on your requirements.
 dirstr = os.path.join('SampleData', '01-05-2023n')
-
+verbose = True
 dd = [f for f in os.listdir(dirstr) if f.endswith('.dat')]
 # for ii, name in enumerate(dd, start=1):
 #     print(f'{ii} {name}')
@@ -83,26 +83,19 @@ for fi in range(1, len(dd)):
                 ageDiffGPS.append(float(stringNMEA[13]))
                 diffRefStation.append(stringNMEA[14].strip())
                 
-                
-                # if len(numArray) >= 3:
-                #     lat.append(np.floor(numArray[1] / 100) + (numArray[1] - np.floor(numArray[1] / 100) * 100) / 60)
-                #     lon.append(-np.floor(numArray[2] / 100) - (numArray[2] - np.floor(numArray[2] / 100) * 100) / 60)
-                #     altWGS84.append(numArray[7])
-                #     altMSL.append(numArray[6])
-                #     pc_time_gga.append(dt)
-
 lat = np.array(lat)
 lon = np.array(lon)
 lat[lat == 0] = np.nan
 lon[lon == 0] = np.nan
 
+# now plot data
 plt.figure(10)
 plt.plot(lon, lat, 'o-')
 plt.figure()
 #plt.plot(pc_time_gga, altWGS84, '.-')
 plt.plot(pc_time_gga, geoSep, label='geoSep')
 plt.plot(pc_time_gga, altMSL, '.-', label='altMSL')
-
+# save data
 outname = f'nmea{dirstr[3:-1]}'
-np.savez(outname, pc_time_gga=pc_time_gga, gps_time=gps_time, lat=lat, lon=lon, altMSL=altMSL, altWGS84=altWGS84)
+np.savez(outname, pc_time_gga=pc_time_gga, gps_time=gps_time, lat=lat, lon=lon, altMSL=altMSL, altWGS84=geoSep)
 

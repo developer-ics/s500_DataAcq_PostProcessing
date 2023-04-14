@@ -18,8 +18,8 @@ end
 %%
 ij=0;i3=0
 for fi=1:length(dd) %5  20201218-101925265.bin ios new 500 khz
-    ['SampleData' slash dirstr '\' dd(fi).name]
-    fid=fopen( ['.\' dirstr '\' dd(fi).name]);
+    ['SampleData' slash dirstr slash dd(fi).name]
+    fid=fopen( ['SampleData' slash dirstr slash dd(fi).name]);
     
     frewind(fid);
     xx=fread(fid,'uchar');
@@ -134,7 +134,7 @@ end
 %%
 figure(1);clf
 plot(smooth_depth_m,'.')
-yaxis([ 0 900])
+%yaxis([ 0 900])
 
 figure(4);clf
 %  pcolor(timestamp_msec/1000-timestamp_msec(1)./1000,rangev{1}/1000,(profile_data'))

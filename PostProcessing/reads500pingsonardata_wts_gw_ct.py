@@ -14,11 +14,12 @@ dd = os.listdir(os.path.join('SampleData', dirstr))  # find dat files for sonar
 #
 # https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api
 ij, i3 = 0, 0
-txt, dt_txt, dt = [], [], []
-distance, confidence, transmit_duration, ping_number, scan_start, scan_length, profile_data_length = [], [], [], [], \
-                                                                                                     [], [], []
+# initialize variables for loop
+distance, confidence, transmit_duration, ping_number, scan_start, scan_length = [], [], [], [], [], [], []
 start_mm, length_mm, start_ping_hz, end_ping_hz, adc_sample_hz, timestamp_msec, spare2 = [], [], [], [], [], [], []
-ping_duration_sec, analog_gain = [], []
+ping_duration_sec, analog_gain, profile_data_length, txt, dt_txt, dt = [], [], [], [], [] []
+min_pwr, step_db, smooth_depth_m, fspare2, is_db, gain_index = [], [], [], [], [], [], [], []
+max_pwr, num_results, rangev, dt_profile, decimation, reserved = [], [], [], [], [], []
 for fi in range(len(dd)):
     with open(os.path.join('SampleData', dirstr, dd[fi]), 'rb') as fid:
         xx = fid.read()
@@ -27,7 +28,8 @@ for fi in range(len(dd)):
         packet_len, packet_id = np.zeros(len(st)), np.zeros(len(st))
         for ii in range(len(st)-1):
             fid.seek(st[ii] + 1, os.SEEK_SET)
-            datestring = fid.read(26).decode('utf-8')
+            datestring = fid.read(26).decode('utf-8', 'replace')  # 'replace' causes a replacement marker (such as '?')
+                                                                    # to be inserted where there is malformed data.
             try:
                 dt.append(datetime.strptime(datestring, '%Y-%m-%d %H:%M:%S.%f'))
             except:
@@ -36,7 +38,7 @@ for fi in range(len(dd)):
             packet_id[ii] = struct.unpack('<H', fid.read(2))[0]
             r1 = struct.unpack('<B', fid.read(1))[0]
             r2 = struct.unpack('<B', fid.read(1))[0]
-            if packet_id == 1300:
+            if packet_id[ii] == 1300:
                 # ij += 1
                 distance.append(struct.unpack('<I', fid.read(4))[0])  # mm
                 confidence.append(struct.unpack('<H', fid.read(2))[0])  # mm
@@ -50,13 +52,14 @@ for fi in range(len(dd)):
                     tmp = struct.unpack('<B', fid.read(1))[0]
                     if tmp:
                         profile_data[ij, jj] = tmp
-            if packet_id == 3:
-                txt.append(fid.read(packet_len).decode('utf-8'))
+            if packet_id[ii] == 3:
+                txt.append(fid.read(int(packet_len[ii])).decode('utf-8'))
                 dt_txt.append(dt)
-            if packet_id == 1308:
+            if packet_id[ii] == 1308:
                 ij += 1
                 dtp = dt
                 ping_number.append(struct.unpack('<I', fid.read(4))[0])  # mm
+                
                 start_mm.append(struct.unpack('<I', fid.read(4))[0])  # mm
                 length_mm.append(struct.unpack('<I', fid.read(4))[0])  # mm
                 start_ping_hz.append(struct.unpack('<I', fid.read(4))[0])  # us
@@ -64,24 +67,24 @@ for fi in range(len(dd)):
                 adc_sample_hz.append(struct.unpack('<I', fid.read(4))[0])  # mm
                 timestamp_msec.append(struct.unpack('I', fid.read(4))[0])
                 spare2.append(struct.unpack('I', fid.read(4))[0])
+                
                 ping_duration_sec.append(struct.unpack('f', fid.read(4))[0])
                 analog_gain.append(struct.unpack('f', fid.read(4))[0])
-
-
-smooth_depth_m = np.fromfile(fid, dtype=np.float32, count=1)
-fspare2 = np.fromfile(fid, dtype=np.float32, count=1)
-is_db = np.fromfile(fid, dtype=np.uint8, count=1)
-gain_index = np.fromfile(fid, dtype=np.uint8, count=1)
-decimation = np.fromfile(fid, dtype=np.uint8, count=1)
-reserved = np.fromfile(fid, dtype=np.uint8, count=1)
-num_results = np.fromfile(fid, dtype=np.uint16, count=1)
-start_mm = np.linspace(start_mm, start_mm + length_mm, num_results)
-dt_profile = dt[ii]
-profile_data = np.empty((num_results, ), dtype=np.uint16)
-for jj in range(num_results):
-    tmp = np.fromfile(fid, dtype=np.uint16, count=1)
-    if tmp.size > 0:
-        profile_data[jj] = tmp
+                max_pwr.append(struct.unpack('f', fid.read(4))[0])
+                min_pwr.append(struct.unpack('f', fid.read(4))[0])
+                step_db.append(struct.unpack('f', fid.read(4))[0])
+                smooth_depth_m.append(struct.unpack('f', fid.read(4))[0])
+                fspare2.append(struct.unpack('f', fid.read(4))[0])
+                is_db.append(struct.unpack('f', fid.read(4))[0])
+    
+                gain_index.append(struct.unpack('f', fid.read(4))[0])
+                decimation.append(struct.unpack('f', fid.read(4))[0])
+                reserved.append(struct.unpack('f', fid.read(4))[0])
+                num_results.append(struct.unpack('f', fid.read(4))[0])
+                rangev.append(np.linspace(start_mm, start_mm + length_mm, num_results))
+                dt_profile.append(dt[ii])
+                
+                profile_data = np.empty((num_results, ), dtype=np.uint16)
 
 # Plotting figures
 plt.figure(1)

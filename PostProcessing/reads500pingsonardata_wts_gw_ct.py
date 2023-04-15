@@ -15,11 +15,11 @@ dd = os.listdir(os.path.join('SampleData', dirstr))  # find dat files for sonar
 # https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api
 ij, i3 = 0, 0
 # initialize variables for loop
-distance, confidence, transmit_duration, ping_number, scan_start, scan_length = [], [], [], [], [], [], []
+distance, confidence, transmit_duration, ping_number, scan_start, scan_length = [], [], [], [], [], []
 start_mm, length_mm, start_ping_hz, end_ping_hz, adc_sample_hz, timestamp_msec, spare2 = [], [], [], [], [], [], []
-ping_duration_sec, analog_gain, profile_data_length, txt, dt_txt, dt = [], [], [], [], [] []
-min_pwr, step_db, smooth_depth_m, fspare2, is_db, gain_index = [], [], [], [], [], [], [], []
-max_pwr, num_results, rangev, dt_profile, decimation, reserved = [], [], [], [], [], []
+ping_duration_sec, analog_gain, profile_data_length, txt, dt_txt, dt = [], [], [], [], [], []
+min_pwr, step_db, smooth_depth_m, fspare2, is_db, gain_index, profile_data = [], [], [], [], [], [], []
+max_pwr, num_results, rangev, gain_setting, dt_profile, decimation, reserved = [], [], [], [], [], [], []
 for fi in range(len(dd)):
     with open(os.path.join('SampleData', dirstr, dd[fi]), 'rb') as fid:
         xx = fid.read()
@@ -39,7 +39,7 @@ for fi in range(len(dd)):
             r1 = struct.unpack('<B', fid.read(1))[0]
             r2 = struct.unpack('<B', fid.read(1))[0]
             if packet_id[ii] == 1300:
-                # ij += 1
+                ij += 1
                 distance.append(struct.unpack('<I', fid.read(4))[0])  # mm
                 confidence.append(struct.unpack('<H', fid.read(2))[0])  # mm
                 transmit_duration.append(struct.unpack('<H', fid.read(2))[0])  # us
@@ -57,7 +57,9 @@ for fi in range(len(dd)):
                 dt_txt.append(dt)
             if packet_id[ii] == 1308:
                 ij += 1
+                
                 dtp = dt
+                #https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api#ping-response-packets
                 ping_number.append(struct.unpack('<I', fid.read(4))[0])  # mm
                 
                 start_mm.append(struct.unpack('<I', fid.read(4))[0])  # mm
@@ -75,17 +77,22 @@ for fi in range(len(dd)):
                 step_db.append(struct.unpack('f', fid.read(4))[0])
                 smooth_depth_m.append(struct.unpack('f', fid.read(4))[0])
                 fspare2.append(struct.unpack('f', fid.read(4))[0])
-                is_db.append(struct.unpack('f', fid.read(4))[0])
-    
-                gain_index.append(struct.unpack('f', fid.read(4))[0])
-                decimation.append(struct.unpack('f', fid.read(4))[0])
-                reserved.append(struct.unpack('f', fid.read(4))[0])
-                num_results.append(struct.unpack('f', fid.read(4))[0])
-                rangev.append(np.linspace(start_mm, start_mm + length_mm, num_results))
+       
+                is_db.append(struct.unpack('B', fid.read(1))[0])
+                gain_index.append(struct.unpack('B', fid.read(1))[0])
+                decimation.append(struct.unpack('B', fid.read(1))[0])
+                reserved.append(struct.unpack('B', fid.read(1))[0])
+                num_results.append(struct.unpack('H', fid.read(2))[0])
+                rangev.append(np.linspace(start_mm[-1], start_mm[-1] + length_mm[-1], num_results[-1]))
+                print(ii)
                 dt_profile.append(dt[ii])
                 
-                profile_data = np.empty((num_results, ), dtype=np.uint16)
-
+                profile_data_single = [] #= np.empty((num_results[-1], ), dtype=np.uint16)
+                for jj in range(num_results[-1]):
+                    tmp = struct.unpack('<H', fid.read(2))[0]
+                    if tmp:
+                        profile_data_single.append(tmp)
+                profile_data.append(profile_data_single)
 # Plotting figures
 plt.figure(1)
 plt.clf()

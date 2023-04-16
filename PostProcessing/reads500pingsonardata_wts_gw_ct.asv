@@ -183,7 +183,6 @@ for ii =1:n
     end
 end
 imagesc( imfilter(filt_prof_data,ones(10,1)./10)>mean(thr))
-
 hold on
 plot(bed_detect_ind+blank,'r')
 figure(5);hold on
@@ -225,7 +224,8 @@ plot(dt_txt,txt_depth,'b');
 hold on
 plot(dt_txt(1:end)+(dt_txt(1)-dt_txt(10)),txt_smooth_depth(1:end),'r')% note delay of 10 samples to account for smoothing filter
 %plot(dt_txt(1:end)+seconds(2),txt_smooth_depth(1:end),'m')% note delay of 10 samples to account for smoothing filter
-
+plot(dt_profile, smooth_depth_m, 'c')
 plot( dt_profile,bed_detect_range,'g')
+legend('txt_depth', 'text_smooth_depth', 'bed_detect_range')
 % the cerulean bed detection looks roughly similar to my 99% thershold detector
 save([ 'detected_range' , dirstr],  'dt_txt' ,'txt_smooth_depth', 'txt_depth'); 

@@ -1,6 +1,7 @@
 import os
 import struct
 from datetime import datetime
+from datetime import timedelta
 from matplotlib import pyplot as plt
 import numpy as np
 # dirstr = '01-11-2023'  # a small grid of goodwill pond in falmouth
@@ -53,7 +54,6 @@ for fi in range(len(dd)):
             r1 = struct.unpack('<B', fid.read(1))[0]
             r2 = struct.unpack('<B', fid.read(1))[0]
             if packet_id[ii] == 1300:
-                ij += 1
                 distance[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
                 confidence[ij] = struct.unpack('<H', fid.read(2))[0]  # mm
                 transmit_duration[ij] = struct.unpack('<H', fid.read(2))[0]  # us
@@ -66,12 +66,12 @@ for fi in range(len(dd)):
                     tmp = struct.unpack('<B', fid.read(1))[0]
                     if tmp:
                         profile_data[ij, jj] = tmp
+                ij += 1
+
             if packet_id[ii] == 3:
                 txt[ij] = fid.read(int(packet_len[ii])).decode('utf-8')
                 dt_txt[ij] = dt
             if packet_id[ii] == 1308:
-                ij += 1
-                
                 dtp = dt
                 #https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api#ping-response-packets
                 ping_number[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
@@ -111,6 +111,7 @@ for fi in range(len(dd)):
                             tmp = struct.unpack('B', read)[0]
                         if tmp:
                             profile_data[ij, jj] = tmp
+                ij += 1
                     #     else:
                     #         print(f'did not tmp {tmp}, ii {ii}, ij {ij}')
                     # else:
@@ -147,24 +148,20 @@ dt_profile = dt_profile[:idxShort]
 #rangev,  profile_data (maybe others) need to be handled
 rangev = rangev[:idxShort, :np.median(num_results).astype(int)]
 profile_data = profile_data[:idxShort, :np.median(num_results).astype(int)]
-# Plotting figures
-plt.figure(1)
-plt.plot(smooth_depth_m, '.')
-# plt.ylim([0, 900])
 
-plt.figure(4)
-plt.pcolormesh(dt_profile, rangev[1] / 1000, profile_data[0:len(timestamp_msec), 0:len(rangev[1])].T)
-plt.shading = 'flat'
+# plotting figures
+plt.figure()
+plt.pcolormesh(dt_profile, rangev[0]/1000, profile_data.T, shading='flat')
 plt.colorbar()
 plt.gca().invert_yaxis()
 plt.ylabel('Depth (m)')
 plt.xlabel('Time (hh:mm)')
-plt.hold(True)
-plt.plot(dt_profile - seconds(2.7), smooth_depth_m, '.k')
+plt.plot(dt_profile - timedelta(seconds=2.7), smooth_depth_m, '.k', ms=3)
 plt.savefig('profile_data.png')
 
 # Filtering and bed detection
 filt_prof_data = profile_data.T
+
 filt_prof_data = hmf(filt_prof_data, 13)
 
 plt.figure(5)

@@ -14,14 +14,28 @@ dd = os.listdir(os.path.join('SampleData', dirstr))  # find dat files for sonar
 #
 # https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api
 ij, i3 = 0, 0
+allocateSize = 20000
 # initialize variables for loop
-distance, confidence, transmit_duration, ping_number, scan_start, scan_length = [], [], [], [], [], []
-start_mm, length_mm, start_ping_hz, end_ping_hz, adc_sample_hz, timestamp_msec, spare2 = [], [], [], [], [], [], []
-ping_duration_sec, analog_gain, profile_data_length, txt, dt_txt, dt = [], [], [], [], [], []
-min_pwr, step_db, smooth_depth_m, fspare2, is_db, gain_index, profile_data = [], [], [], [], [], [], []
-max_pwr, num_results, rangev, gain_setting, dt_profile, decimation, reserved = [], [], [], [], [], [], []
+distance, confidence, transmit_duration = np.zeros(allocateSize),np.zeros(allocateSize),np.zeros(allocateSize) # [],
+ping_number, scan_start, scan_length = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize)
+end_ping_hz, adc_sample_hz, timestamp_msec, spare2 = np.zeros(allocateSize), np.zeros(allocateSize), \
+                                                     np.zeros(allocateSize), np.zeros(allocateSize)
+start_mm, length_mm, start_ping_hz = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize),
+ping_duration_sec, analog_gain, profile_data_length, =  np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize)
+
+min_pwr, step_db, smooth_depth_m, fspare2= np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize),  np.zeros(allocateSize)
+is_db, gain_index = np.zeros(allocateSize), np.zeros(allocateSize)
+max_pwr, num_results  =  np.zeros(allocateSize), np.zeros(allocateSize, dtype=int)
+gain_setting,  decimation, reserved = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize),
+# these are complicated preallocations
+txt, dt_profile, dt_txt, dt = np.zeros(allocateSize, dtype=object), np.zeros(allocateSize, dtype=object), \
+                              np.zeros(allocateSize, dtype=object), np.zeros(allocateSize, dtype=object)
+rangev = np.zeros((allocateSize, 100000))
+profile_data = np.zeros((allocateSize, allocateSize))
 for fi in range(len(dd)):
     with open(os.path.join('SampleData', dirstr, dd[fi]), 'rb') as fid:
+        fname = os.path.join('SampleData', dirstr, dd[fi])
+        print(f'processing {fname}')
         xx = fid.read()
         st = [i + 1 for i in range(len(xx)) if xx[i:i+2] == b'BR']
         # initalize variables for loop
@@ -31,7 +45,7 @@ for fi in range(len(dd)):
             datestring = fid.read(26).decode('utf-8', 'replace')  # 'replace' causes a replacement marker (such as '?')
                                                                     # to be inserted where there is malformed data.
             try:
-                dt.append(datetime.strptime(datestring, '%Y-%m-%d %H:%M:%S.%f'))
+                dt[ii] = datetime.strptime(datestring, '%Y-%m-%d %H:%M:%S.%f')
             except:
                 continue
             packet_len[ii] = struct.unpack('<H', fid.read(2))[0]
@@ -40,68 +54,106 @@ for fi in range(len(dd)):
             r2 = struct.unpack('<B', fid.read(1))[0]
             if packet_id[ii] == 1300:
                 ij += 1
-                distance.append(struct.unpack('<I', fid.read(4))[0])  # mm
-                confidence.append(struct.unpack('<H', fid.read(2))[0])  # mm
-                transmit_duration.append(struct.unpack('<H', fid.read(2))[0])  # us
-                ping_number.append(struct.unpack('<I', fid.read(4))[0])  # #
-                scan_start.append(struct.unpack('<I', fid.read(4))[0])  # mm
-                scan_length.append(struct.unpack('<I', fid.read(4))[0])  # mm
-                gain_setting.append(struct.unpack('<I', fid.read(4))[0])
-                profile_data_length.append(struct.unpack('<I', fid.read(4))[0])
+                distance[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
+                confidence[ij] = struct.unpack('<H', fid.read(2))[0]  # mm
+                transmit_duration[ij] = struct.unpack('<H', fid.read(2))[0]  # us
+                ping_number[ij] = struct.unpack('<I', fid.read(4))[0]  # #
+                scan_start[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
+                scan_length[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
+                gain_setting[ij] = struct.unpack('<I', fid.read(4))[0]
+                profile_data_length[ij] = struct.unpack('<I', fid.read(4))[0]
                 for jj in range(200):
                     tmp = struct.unpack('<B', fid.read(1))[0]
                     if tmp:
                         profile_data[ij, jj] = tmp
             if packet_id[ii] == 3:
-                txt.append(fid.read(int(packet_len[ii])).decode('utf-8'))
-                dt_txt.append(dt)
+                txt[ij] = fid.read(int(packet_len[ii])).decode('utf-8')
+                dt_txt[ij] = dt
             if packet_id[ii] == 1308:
                 ij += 1
                 
                 dtp = dt
                 #https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api#ping-response-packets
-                ping_number.append(struct.unpack('<I', fid.read(4))[0])  # mm
+                ping_number[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
                 
-                start_mm.append(struct.unpack('<I', fid.read(4))[0])  # mm
-                length_mm.append(struct.unpack('<I', fid.read(4))[0])  # mm
-                start_ping_hz.append(struct.unpack('<I', fid.read(4))[0])  # us
-                end_ping_hz.append(struct.unpack('<I', fid.read(4))[0])  # #
-                adc_sample_hz.append(struct.unpack('<I', fid.read(4))[0])  # mm
-                timestamp_msec.append(struct.unpack('I', fid.read(4))[0])
-                spare2.append(struct.unpack('I', fid.read(4))[0])
+                start_mm[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
+                length_mm[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
+                start_ping_hz[ij] = struct.unpack('<I', fid.read(4))[0]  # us
+                end_ping_hz[ij] = struct.unpack('<I', fid.read(4))[0]  # #
+                adc_sample_hz[ij]= struct.unpack('<I', fid.read(4))[0]  # mm
+                timestamp_msec[ij] = struct.unpack('I', fid.read(4))[0]
+                spare2[ij] = struct.unpack('I', fid.read(4))[0]
                 
-                ping_duration_sec.append(struct.unpack('f', fid.read(4))[0])
-                analog_gain.append(struct.unpack('f', fid.read(4))[0])
-                max_pwr.append(struct.unpack('f', fid.read(4))[0])
-                min_pwr.append(struct.unpack('f', fid.read(4))[0])
-                step_db.append(struct.unpack('f', fid.read(4))[0])
-                smooth_depth_m.append(struct.unpack('f', fid.read(4))[0])
-                fspare2.append(struct.unpack('f', fid.read(4))[0])
+                ping_duration_sec[ij] = struct.unpack('f', fid.read(4))[0]
+                analog_gain[ij] = struct.unpack('f', fid.read(4))[0]
+                max_pwr[ij] = struct.unpack('f', fid.read(4))[0]
+                min_pwr[ij] = struct.unpack('f', fid.read(4))[0]
+                step_db[ij] = struct.unpack('f', fid.read(4))[0]
+                smooth_depth_m[ij] = struct.unpack('f', fid.read(4))[0]
+                fspare2[ij] = struct.unpack('f', fid.read(4))[0]
        
-                is_db.append(struct.unpack('B', fid.read(1))[0])
-                gain_index.append(struct.unpack('B', fid.read(1))[0])
-                decimation.append(struct.unpack('B', fid.read(1))[0])
-                reserved.append(struct.unpack('B', fid.read(1))[0])
-                num_results.append(struct.unpack('H', fid.read(2))[0])
-                rangev.append(np.linspace(start_mm[-1], start_mm[-1] + length_mm[-1], num_results[-1]))
-                print(ii)
-                dt_profile.append(dt[ii])
-                
-                profile_data_single = [] #= np.empty((num_results[-1], ), dtype=np.uint16)
-                for jj in range(num_results[-1]):
-                    tmp = struct.unpack('<H', fid.read(2))[0]
-                    if tmp:
-                        profile_data_single.append(tmp)
-                profile_data.append(profile_data_single)
+                is_db[ij] = struct.unpack('B', fid.read(1))[0]
+                gain_index[ij] = struct.unpack('B', fid.read(1))[0]
+                decimation[ij] = struct.unpack('B', fid.read(1))[0]
+                reserved[ij] = struct.unpack('B', fid.read(1))[0]
+                num_results[ij] = struct.unpack('H', fid.read(2))[0]
+
+                rangev[ij,0:num_results[ij]] = np.linspace(start_mm[ij], start_mm[ij] + length_mm[ij], num_results[ij])
+                dt_profile[ij] = dt[ii] # assign datetime from data written
+                # profile_data_single = [] #= np.empty((num_results[-1], ), dtype=np.uint16)
+                for jj in range(num_results[ij]):
+                    # print(jj)
+                    read = fid.read(2)
+                    if read:
+                        try: # data should be unsigned short
+                            tmp = struct.unpack('<H', read)[0]
+                        except: # when it's unsigned character
+                            tmp = struct.unpack('B', read)[0]
+                        if tmp:
+                            profile_data[ij, jj] = tmp
+                    #     else:
+                    #         print(f'did not tmp {tmp}, ii {ii}, ij {ij}')
+                    # else:
+                    #     print(f'didn not read {read}, ii {ii}, ij {ij}')
+                # profile_data.append(profile_data_single)
+print('now clean up data and memory because we couldn''t pre-allocate')
+
+idxShort = np.argwhere(timestamp_msec!=0).max()
+smooth_depth_m = smooth_depth_m[:idxShort]
+reserved = reserved[:idxShort]
+num_results = num_results[:idxShort]
+dt_profile = dt_profile[:idxShort]
+start_mm = start_mm[:idxShort]
+length_mm = length_mm[:idxShort]
+start_ping_hz = start_ping_hz[:idxShort]
+end_ping_hz = end_ping_hz[:idxShort]
+adc_sample_hz = adc_sample_hz[:idxShort]
+timestamp_msec = timestamp_msec[:idxShort]
+spare2 = spare2[:idxShort]
+
+ping_duration_sec = ping_duration_sec[:idxShort]
+analog_gain = analog_gain[:idxShort]
+max_pwr = max_pwr[:idxShort]
+min_pwr = min_pwr[:idxShort]
+step_db = step_db[:idxShort]
+smooth_depth_m = smooth_depth_m[:idxShort]
+fspare2 = fspare2[:idxShort]
+
+is_db = is_db[:idxShort]
+gain_index = gain_index[:idxShort]
+decimation = decimation[:idxShort]
+dt_profile = dt_profile[:idxShort]
+# num results = 2222
+#rangev,  profile_data (maybe others) need to be handled
+rangev = rangev[:idxShort, :np.median(num_results).astype(int)]
+profile_data = profile_data[:idxShort, :np.median(num_results).astype(int)]
 # Plotting figures
 plt.figure(1)
-plt.clf()
 plt.plot(smooth_depth_m, '.')
-plt.ylim([0, 900])
+# plt.ylim([0, 900])
 
 plt.figure(4)
-plt.clf()
-plt.pcolor(dt_profile, rangev[2] / 1000, profile_data[0:len(timestamp_msec), 0:len(rangev[2])].T)
+plt.pcolormesh(dt_profile, rangev[1] / 1000, profile_data[0:len(timestamp_msec), 0:len(rangev[1])].T)
 plt.shading = 'flat'
 plt.colorbar()
 plt.gca().invert_yaxis()

@@ -18,8 +18,9 @@ end
 %%
 ij=0;i3=0
 for fi=1:length(dd) %5  20201218-101925265.bin ios new 500 khz
-    ['SampleData' slash dirstr slash dd(fi).name]
-    fid=fopen( ['SampleData' slash dirstr slash dd(fi).name]);
+    fname = ['SampleData' slash dirstr slash dd(fi).name];
+    disp(fname)
+    fid=fopen(fname);
     
     frewind(fid);
     xx=fread(fid,'uchar');

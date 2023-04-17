@@ -6,18 +6,19 @@ from datetime import timedelta
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
+import glob
 # dirstr = '01-11-2023'  # a small grid of goodwill pond in falmouth
 # dirstr = '12-21-2022'  # with emlid ppk GPS saved and processed
 dirstr = '01-05-2023'  # alos with emlid ppk GPS saved and processed
-
-dd = os.listdir(os.path.join('SampleData', dirstr))  # find dat files for sonar
-# loop through files
+dirstr = '20230327'
+dd = glob.glob(os.path.join('SampleData', dirstr,"*.dat"))  # find dat files for sonar
+print(f'found {len(dd)} sonar files for procesing')# loop through files
 # for ii in range(len(dd)):
 #     print(str(ii + 1) + ' ' + dd[ii])
 #
 # https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api
 ij, i3 = 0, 0
-allocateSize = 20000
+allocateSize = 50000
 # initialize variables for loop
 distance, confidence, transmit_duration = np.zeros(allocateSize),np.zeros(allocateSize),np.zeros(allocateSize) # [],
 ping_number, scan_start, scan_length = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize)
@@ -28,7 +29,7 @@ ping_duration_sec, analog_gain, profile_data_length, =  np.zeros(allocateSize), 
 
 min_pwr, step_db, smooth_depth_m, fspare2= np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize),  np.zeros(allocateSize)
 is_db, gain_index = np.zeros(allocateSize), np.zeros(allocateSize)
-max_pwr, num_results  =  np.zeros(allocateSize), np.zeros(allocateSize, dtype=int)
+max_pwr, num_results, power_results  =  np.zeros(allocateSize), np.zeros(allocateSize, dtype=int), np.zeros(allocateSize, dtype=int)
 gain_setting,  decimation, reserved = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize),
 # these are complicated preallocations
 txt, dt_profile, dt_txt, dt = np.zeros(allocateSize, dtype=object), np.zeros(allocateSize, dtype=object), \
@@ -36,8 +37,8 @@ txt, dt_profile, dt_txt, dt = np.zeros(allocateSize, dtype=object), np.zeros(all
 rangev = np.zeros((allocateSize, 100000))
 profile_data = np.zeros((allocateSize, allocateSize))
 for fi in range(len(dd)):
-    with open(os.path.join('SampleData', dirstr, dd[fi]), 'rb') as fid:
-        fname = os.path.join('SampleData', dirstr, dd[fi])
+    with open(dd[fi], 'rb') as fid:
+        fname = dd[fi]
         print(f'processing {fname}')
         xx = fid.read()
         st = [i + 1 for i in range(len(xx)) if xx[i:i+2] == b'BR']
@@ -77,7 +78,6 @@ for fi in range(len(dd)):
                 dtp = dt
                 #https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api#ping-response-packets
                 ping_number[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
-                
                 start_mm[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
                 length_mm[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
                 start_ping_hz[ij] = struct.unpack('<I', fid.read(4))[0]  # us
@@ -99,7 +99,7 @@ for fi in range(len(dd)):
                 decimation[ij] = struct.unpack('B', fid.read(1))[0]
                 reserved[ij] = struct.unpack('B', fid.read(1))[0]
                 num_results[ij] = struct.unpack('H', fid.read(2))[0]
-
+`               power_results[ij] = struct.unpack('H', fid.read(2))[0]
                 rangev[ij,0:num_results[ij]] = np.linspace(start_mm[ij], start_mm[ij] + length_mm[ij], num_results[ij])
                 dt_profile[ij] = dt[ii] # assign datetime from data written
                 # profile_data_single = [] #= np.empty((num_results[-1], ), dtype=np.uint16)
@@ -132,15 +132,12 @@ end_ping_hz = end_ping_hz[:idxShort]
 adc_sample_hz = adc_sample_hz[:idxShort]
 timestamp_msec = timestamp_msec[:idxShort]
 spare2 = spare2[:idxShort]
-
 ping_duration_sec = ping_duration_sec[:idxShort]
 analog_gain = analog_gain[:idxShort]
 max_pwr = max_pwr[:idxShort]
 min_pwr = min_pwr[:idxShort]
 step_db = step_db[:idxShort]
-smooth_depth_m = smooth_depth_m[:idxShort]
 fspare2 = fspare2[:idxShort]
-
 is_db = is_db[:idxShort]
 gain_index = gain_index[:idxShort]
 decimation = decimation[:idxShort]
@@ -148,26 +145,58 @@ dt_profile = dt_profile[:idxShort]
 # num results = 2222
 #rangev,  profile_data (maybe others) need to be handled
 rangev = rangev[:idxShort, :np.median(num_results).astype(int)]
-profile_data = profile_data[:idxShort, :np.median(num_results).astype(int)]
+profile_data = profile_data[:idxShort, :np.median(num_results).astype(int)].T
+import h5py
+outfname = 'myfile.h5'
+with h5py.File(outfname, 'w') as hf:
+    hf.create_dataset('smooth_depth_m', data=smooth_depth_m)
+    hf.create_dataset('profile_data', data=profile_data)
+    hf.create_dataset('num_results', data=num_results)
+    hf.create_dataset('start_mm', data=start_mm)
+    hf.create_dataset('length_mm', data=length_mm)
+    hf.create_dataset('start_ping_hz', data=start_ping_hz)
+    hf.create_dataset('end_ping_hz', data=end_ping_hz)
+    hf.create_dataset('adc_sample_hz', data=adc_sample_hz)
+    hf.create_dataset('timestamp_msec', data=timestamp_msec)
+    hf.create_dataset('analog_gain', data=analog_gain)
+    hf.create_dataset('max_pwr', data=max_pwr)
+    hf.create_dataset('this_ping_depth_m', data=step_db)
+    hf.create_dataset('this_ping_depth_measurement_confidence', data=is_db)
+    hf.create_dataset('smoothed_depth_measurement_confidence', data=reserved)
+    hf.create_dataset('gain_index', data=gain_index)
+    hf.create_dataset('decimation', data=decimation)
+    hf.create_dataset('range_m', data=rangev/1000)
+    
 
+
+
+subset = np.argwhere(dt_profile > datetime(2023,3,27,14)) & (dt_profile < datetime(2023,3,27,15))
 # plotting figures
 plt.figure()
-plt.pcolormesh(dt_profile, rangev[0]/1000, profile_data.T, shading='auto')
+plt.pcolormesh(dt_profile, rangev[0]/1000, profile_data, shading='auto')
 plt.colorbar()
 plt.gca().invert_yaxis()
 plt.ylabel('Depth (m)')
 plt.xlabel('Time (hh:mm)')
-plt.plot(dt_profile - timedelta(seconds=2.7), smooth_depth_m, '.k', ms=3)
-plt.savefig('profile_data_python.png')
+plt.plot(dt_profile, smooth_depth_m, '.k', ms=3)
+plt.savefig(f'profile_data_{datestring}_python.png')
 
 # Filtering and bed detection
 filt_prof_data = cv2.blur(profile_data.copy(), ksize=(13,13)) ## couldn't find a hybrid median filter,
 # used a bluring filter
 
 plt.figure(5)
-plt.clf()
-plt.pcolormesh(timestamp_msec / 1000 - timestamp_msec[0] / 1000, rangev[2] / 1000, filt_prof_data.T, shading='auto')
-plt.gca().invert_yaxis()
+plt.pcolormesh(dt_profile, rangev[2] / 1000, filt_prof_data.T, shading='auto')
+plt.plot(dt_profile, smooth_depth_m, '.k', ms=3)
+plt.title('filtered version of profile plot')
+plt.ylabel('Depth (m)')
+plt.ylim([0,12])
+plt.xlabel('Time (hh:mm)')
+plt.colorbar()
+plt.tight_layout()
+plt.savefig(f'profile_data_{datestring}_Cleaned_python.png')
+
+# plt.gca().invert_yaxis()
 
 # spicer stopped conversion here as smooth depth provided by manufacturer looked good enough compared to below
 # filtering.  Nothing further was tested, but inital conversion from chatGPT provided for anyone who want's to proceed.

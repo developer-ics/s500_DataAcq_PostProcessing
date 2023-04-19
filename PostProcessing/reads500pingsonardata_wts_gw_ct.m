@@ -34,6 +34,7 @@ for fi=1:length(dd) %5  20201218-101925265.bin ios new 500 khz
         packet_id(ii)=fread(fid,1,'uint16');
         r1=fread(fid,1,'uint8');
         r2=fread(fid,1,'uint8');
+        % 1300 packet are only produced by ping snar frombluerobotics
         if packet_id(ii)==1300
             %  disp('pid=1300')
             ij=ij+1;
@@ -54,6 +55,8 @@ for fi=1:length(dd) %5  20201218-101925265.bin ios new 500 khz
             end
             %end
         end
+        % the s500 produces id= 3 packets with text detected depth and the
+        % 1308 packet with the full profile
         if packet_id(ii)==3
             
             i3=i3+1;

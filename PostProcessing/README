@@ -1,0 +1,13 @@
+The post-processing work flow is listed below.
+1) read NMEA files from GPS (readNMEAfiles.*)
+2) Read the sonar files (reads500pingsonardata_wts_gw_ct.*)
+### work flow divergest depending on application
+
+3.a) Used for quick QA/QC (ignores any offset between sonar's data timestamp and vehicle/GPS timestamp)
+    3.a.1) mergeGPS_sonar.* - this ignores any quick QA/QC post survey
+
+3.b Used for full fidelity data
+3.b.1) get the binary files (ubx) from the emlid GPS
+3.b.2) use emlid studio to convert UBX -> Rinex format binarys
+    - software avialable here: https://docs.emlid.com/emlid-studio/#download-emlid-studio
+3.b.3) mergePPKGPS_sonar.* - does cross-correlation between GPS heave of boat (flat bottom) and sonar data (bottom)

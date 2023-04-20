@@ -34,8 +34,10 @@ gain_setting,  decimation, reserved = np.zeros(allocateSize), np.zeros(allocateS
 # these are complicated preallocations
 txt, dt_profile, dt_txt, dt = np.zeros(allocateSize, dtype=object), np.zeros(allocateSize, dtype=object), \
                               np.zeros(allocateSize, dtype=object), np.zeros(allocateSize, dtype=object)
-rangev = np.zeros((allocateSize, 100000))
-profile_data = np.zeros((allocateSize, allocateSize))
+rangev = np.zeros((allocateSize, 100000))              # time by depth
+profile_data = np.zeros((allocateSize, allocateSize))  # time by depth
+# read first one ping and pre-allocate arrays
+# take time of application and ping rate to generate time allocation size (max run time of vehicle)
 for fi in range(len(dd)):
     with open(dd[fi], 'rb') as fid:
         fname = dd[fi]
@@ -71,7 +73,7 @@ for fi in range(len(dd)):
                         profile_data[ij, jj] = tmp
                 ij += 1
 
-            if packet_id[ii] == 3:
+            if packet_id[ii] == 3:  # just has text string (has detected depth)
                 txt[ij] = fid.read(int(packet_len[ii])).decode('utf-8')
                 dt_txt[ij] = dt
             if packet_id[ii] == 1308:
@@ -168,7 +170,7 @@ with h5py.File(outfname, 'w') as hf:
     hf.create_dataset('range_m', data=rangev/1000)
     
 
-
+print('despike timeseries ')
 
 subset = np.argwhere(dt_profile > datetime(2023,3,27,14)) & (dt_profile < datetime(2023,3,27,15))
 # plotting figures

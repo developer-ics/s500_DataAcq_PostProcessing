@@ -6,6 +6,13 @@ import matplotlib.pyplot as plt
 ## converted read_emlid_LLH_raw.m in chatGPT on 19 February 2023
 
 #Note that in Python, the code needs to explicitly import the necessary libraries and functions, unlike MATLAB which has them preloaded. Additionally, Python uses different syntax and naming conventions compared to MATLAB, so some modifications were made to convert the code.
+# Emlid's software (free) emlid studio
+# ubx -> rinex
+# Will ask for base station file too (Should be also rinex) then it'll do processing and spit out text file
+# (23B/o/P) are rinex files  -> built on RTK_Lib as processing engine open source GPS processing package
+# Rinex files go to emlid studio
+# pos file is output from emlid studio file (text file)
+#
 
 fs = '20221221165017'
 fs = '20230105141705'

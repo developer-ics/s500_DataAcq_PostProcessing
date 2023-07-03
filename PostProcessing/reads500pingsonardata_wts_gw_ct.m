@@ -1,8 +1,8 @@
 clear
 %dirstr='01-11-2023'%  a small gird of goodwil pond in falmouth
-dirstr='12-21-2022' % with emlid ppk GPS saved and processed
-dirstr='01-05-2023' % also with emlid ppk GPS saved and processed
-
+dirstr='12-21-2022'; % with emlid ppk GPS saved and processed
+dirstr='01-05-2023'; % also with emlid ppk GPS saved and processed
+dirstr='20230216'; % spicer's data
 
 if ispc
     slash = '\';
@@ -16,7 +16,7 @@ for ii=1:length(dd)
 end
 
 %%
-ij=0;i3=0
+ij=0;i3=0;
 for fi=1:length(dd) %5  20201218-101925265.bin ios new 500 khz
     fname = ['SampleData' slash dirstr slash dd(fi).name];
     disp(fname)

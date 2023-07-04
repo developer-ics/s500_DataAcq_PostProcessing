@@ -1,3 +1,5 @@
+"""This file is an evolution of reads500pingsonar.py a little tightened up and functions are ready to migrate to
+library"""
 import os
 import struct
 from datetime import datetime
@@ -12,7 +14,8 @@ import h5py
 import tqdm
 import netCDF4 as nc
 
-def loadSonar_s500_binary(dataPath, outfname = 'myfile.h5'):
+
+def loadSonar_s500_binary(dataPath, outfname='myfile.h5'):
     """Loads and concatenates all of the binary files (*.dat) located in the dataPath location
     
     :param dataPath: search path for sonar data files
@@ -20,23 +23,25 @@ def loadSonar_s500_binary(dataPath, outfname = 'myfile.h5'):
     :return:
     """
     dd = glob.glob(os.path.join(dataPath, "*.dat"))  # find dat files for sonar
-    print(f'found {len(dd)} sonar files for procesing')# loop through files
+    print(f'found {len(dd)} sonar files for procesing')  # loop through files
     # https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api
     ij, i3 = 0, 0
     allocateSize = 50000
     # initialize variables for loop
-    distance, confidence, transmit_duration = np.zeros(allocateSize),np.zeros(allocateSize),np.zeros(allocateSize) # [],
+    distance, confidence, transmit_duration = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(
+        allocateSize)  # [],
     ping_number, scan_start, scan_length = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize)
     end_ping_hz, adc_sample_hz, timestamp_msec, spare2 = np.zeros(allocateSize), np.zeros(allocateSize), \
                                                          np.zeros(allocateSize), np.zeros(allocateSize)
     start_mm, length_mm, start_ping_hz = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize),
-    ping_duration_sec, analog_gain, profile_data_length, =  np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize)
+    ping_duration_sec, analog_gain, profile_data_length, = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(
+        allocateSize)
     
     min_pwr, step_db, smooth_depth_m, fspare2 = np.zeros(allocateSize), np.zeros(allocateSize), \
-                                                np.zeros(allocateSize),  np.zeros(allocateSize)
+                                                np.zeros(allocateSize), np.zeros(allocateSize)
     is_db, gain_index, power_results = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize)
-    max_pwr, num_results  =  np.zeros(allocateSize), np.zeros(allocateSize, dtype=int)
-    gain_setting,  decimation, reserved = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize),
+    max_pwr, num_results = np.zeros(allocateSize), np.zeros(allocateSize, dtype=int)
+    gain_setting, decimation, reserved = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(allocateSize),
     # these are complicated preallocations
     txt, dt_profile, dt_txt, dt = np.zeros(allocateSize, dtype=object), np.zeros(allocateSize, dtype=object), \
                                   np.zeros(allocateSize, dtype=object), np.zeros(allocateSize, dtype=object)
@@ -52,8 +57,9 @@ def loadSonar_s500_binary(dataPath, outfname = 'myfile.h5'):
             packet_len, packet_id = np.zeros(len(st)), np.zeros(len(st))
             for ii in sonarRange(len(st) - 1):
                 fid.seek(st[ii] + 1, os.SEEK_SET)
-                datestring = fid.read(26).decode('utf-8', 'replace')  # 'replace' causes a replacement marker (such as '?')
-                                                                        # to be inserted where there is malformed data.
+                datestring = fid.read(26).decode('utf-8',
+                                                 'replace')  # 'replace' causes a replacement marker (such as '?')
+                # to be inserted where there is malformed data.
                 try:
                     dt[ii] = datetime.strptime(datestring, '%Y-%m-%d %H:%M:%S.%f')
                 except:
@@ -76,19 +82,19 @@ def loadSonar_s500_binary(dataPath, outfname = 'myfile.h5'):
                         if tmp:
                             profile_data[ij, jj] = tmp
                     ij += 1
-    
+                
                 if packet_id[ii] == 3:
                     txt[ij] = fid.read(int(packet_len[ii])).decode('utf-8')
                     dt_txt[ij] = dt
                 if packet_id[ii] == 1308:
                     dtp = dt
-                    #https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api#ping-response-packets
+                    # https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api#ping-response-packets
                     ping_number[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
                     start_mm[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
                     length_mm[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
                     start_ping_hz[ij] = struct.unpack('<I', fid.read(4))[0]  # us
                     end_ping_hz[ij] = struct.unpack('<I', fid.read(4))[0]  # #
-                    adc_sample_hz[ij]= struct.unpack('<I', fid.read(4))[0]  # mm
+                    adc_sample_hz[ij] = struct.unpack('<I', fid.read(4))[0]  # mm
                     timestamp_msec[ij] = struct.unpack('I', fid.read(4))[0]
                     spare2[ij] = struct.unpack('I', fid.read(4))[0]
                     
@@ -99,30 +105,31 @@ def loadSonar_s500_binary(dataPath, outfname = 'myfile.h5'):
                     step_db[ij] = struct.unpack('f', fid.read(4))[0]
                     smooth_depth_m[ij] = struct.unpack('f', fid.read(4))[0]
                     fspare2[ij] = struct.unpack('f', fid.read(4))[0]
-           
+                    
                     is_db[ij] = struct.unpack('B', fid.read(1))[0]
                     gain_index[ij] = struct.unpack('B', fid.read(1))[0]
                     decimation[ij] = struct.unpack('B', fid.read(1))[0]
                     reserved[ij] = struct.unpack('B', fid.read(1))[0]
                     num_results[ij] = struct.unpack('H', fid.read(2))[0]
                     power_results[ij] = struct.unpack('H', fid.read(2))[0]
-                    rangev[ij,0:num_results[ij]] = np.linspace(start_mm[ij], start_mm[ij] + length_mm[ij], num_results[ij])
-                    dt_profile[ij] = dt[ii] # assign datetime from data written
+                    rangev[ij, 0:num_results[ij]] = np.linspace(start_mm[ij], start_mm[ij] + length_mm[ij],
+                                                                num_results[ij])
+                    dt_profile[ij] = dt[ii]  # assign datetime from data written
                     # profile_data_single = [] #= np.empty((num_results[-1], ), dtype=np.uint16)
                     for jj in sonarRange(num_results[ij]):
                         # print(jj)
                         read = fid.read(2)
                         if read:
-                            try: # data should be unsigned short
+                            try:  # data should be unsigned short
                                 tmp = struct.unpack('<H', read)[0]
-                            except: # when it's unsigned character
+                            except:  # when it's unsigned character
                                 tmp = struct.unpack('B', read)[0]
                             if tmp:
                                 profile_data[ij, jj] = tmp
                     ij += 1
     
     # clean up array's from over allocation to free up memory and data
-    idxShort = np.argwhere(timestamp_msec!=0).max() # identify index for end of data to keep
+    idxShort = np.argwhere(timestamp_msec != 0).max()  # identify index for end of data to keep
     smooth_depth_m = smooth_depth_m[:idxShort]
     reserved = reserved[:idxShort]
     num_results = num_results[:idxShort]
@@ -143,8 +150,8 @@ def loadSonar_s500_binary(dataPath, outfname = 'myfile.h5'):
     gain_index = gain_index[:idxShort]
     decimation = decimation[:idxShort]
     dt_profile = dt_profile[:idxShort]
-
-    #rangev,  profile_data (maybe others) need to be handled
+    
+    # rangev,  profile_data (maybe others) need to be handled
     rangev = rangev[:idxShort, :np.median(num_results).astype(int)]
     profile_data = profile_data[:idxShort, :np.median(num_results).astype(int)].T
     
@@ -154,7 +161,7 @@ def loadSonar_s500_binary(dataPath, outfname = 'myfile.h5'):
         hf.create_dataset('ping_duration', data=ping_duration_sec)
         hf.create_dataset('time', data=nc.date2num(dt_profile, 'seconds since 1970-01-01'))
         hf.create_dataset('smooth_depth_m', data=smooth_depth_m)
-        hf.create_dataset('profile_data', data=profile_data.T) # putting time as first axis
+        hf.create_dataset('profile_data', data=profile_data.T)  # putting time as first axis
         hf.create_dataset('num_results', data=num_results)
         hf.create_dataset('start_mm', data=start_mm)
         hf.create_dataset('length_mm', data=length_mm)
@@ -169,8 +176,9 @@ def loadSonar_s500_binary(dataPath, outfname = 'myfile.h5'):
         hf.create_dataset('smoothed_depth_measurement_confidence', data=reserved)
         hf.create_dataset('gain_index', data=gain_index)
         hf.create_dataset('decimation', data=decimation)
-        hf.create_dataset('range_m', data=rangev/1000)
-        
+        hf.create_dataset('range_m', data=rangev / 1000)
+
+
 def loadSonarH5(fname):
     """Loads already created H5 file from the sonar data. """
     hf = h5py.File(fname, 'r')
@@ -178,6 +186,8 @@ def loadSonarH5(fname):
     for key in hf.keys():
         dataOut[key] = np.array(hf.get(key))
     return dataOut
+
+
 def plot_single_backscatterProfile(fname, time, sonarRange, profile_data, this_ping_depth_m, smooth_depth_m, index):
     """Create's a plot that shows full backscatter and individual profile  with identified depths
     
@@ -190,40 +200,44 @@ def plot_single_backscatterProfile(fname, time, sonarRange, profile_data, this_p
     :param index:
     :return:
     """
-    plt.figure(figsize=(12,8))
-    ax1 = plt.subplot2grid((4,4), (0,1), colspan=3, rowspan=4)
+    plt.figure(figsize=(12, 8))
+    ax1 = plt.subplot2grid((4, 4), (0, 1), colspan=3, rowspan=4)
     backscatter = ax1.pcolormesh(time, sonarRange[0], profile_data.T, shading='auto')
     ax1.plot(time, this_ping_depth_m, color='black', ms=0.1, label='instant depth', alpha=0.5)
     # ax1.plot(time, smooth_depth_m, 'black', ms=1, label='Smooth Depth')
     ax1.plot(time[index], smooth_depth_m[index], ms=15, marker='X', color='red')
     cbar = plt.colorbar(mappable=backscatter, ax=ax1)
     cbar.set_label('backscatter value')
-    ax1.set_ylim([0,5])
+    ax1.set_ylim([0, 5])
     
-    ax2 = plt.subplot2grid((4,4), (0,0), rowspan=4, sharey=ax1)
+    ax2 = plt.subplot2grid((4, 4), (0, 0), rowspan=4, sharey=ax1)
     ax2.plot(profile_data[index], sonarRange[0], alpha=1)
     ax2.plot(profile_data[index, np.argmin(np.abs(sonarRange[index] - this_ping_depth_m[index]))], this_ping_depth_m[
-        index],'grey', marker='X', ms=10, label='this ping')
+        index], 'grey', marker='X', ms=10, label='this ping')
     ax2.plot(profile_data[index, np.argmin(np.abs(sonarRange[index] - smooth_depth_m[index]))], smooth_depth_m[index], \
              'black', marker='X', ms=10, label='smoothed bottom')
     ax2.legend()
     
     for ii in range(5):
-        ax2.plot(profile_data[index-ii], sonarRange[0], alpha=.4 - ii * .07, color='k')
+        ax2.plot(profile_data[index - ii], sonarRange[0], alpha=.4 - ii * .07, color='k')
     ax2.set_ylabel('depth [m]')
     plt.tight_layout()
     plt.savefig(fname)
     plt.close()
 
-fpath = '/data/yellowfin/20230327/s500'
-sonarH5 ='/data/yellowfin/20230327/20230327_sonarRaw.h5'
+
+fpath = '/data/yellowfin/20230327/s500' # reads sonar from here
+sonarH5 = '/data/yellowfin/20230327/20230327_sonarRaw.h5' #saves sonar file here
 # loadSonar_s500_binary(fpath, outfname=sonarH5)
 sonarData = loadSonarH5(sonarH5)
+# sub parse data to make sense
+startTime = datetime(2023, 3, 27, 14, 40)
+endTime =  datetime(2023, 3, 27, 15)
 
 # unpack loaded sonar data
 time = nc.num2date(sonarData['time'], 'seconds since 1970-01-01', only_use_cftime_datetimes=False,
-                   only_use_python_datetimes=True) #nc.num2date(sonarData['time'], 'seconds since 1970-01-01')
-subset = np.argwhere((time > datetime(2023, 3, 27, 14, 40)) & (time < datetime(2023, 3, 27, 15))).squeeze()
+                   only_use_python_datetimes=True)  # nc.num2date(sonarData['time'], 'seconds since 1970-01-01')
+subset = np.argwhere((time > startTime) & (time < endTime)).squeeze()
 time = time[subset]
 profile_data = sonarData['profile_data'][:, subset].T
 smooth_depth_m = sonarData['smooth_depth_m'][subset]
@@ -240,7 +254,6 @@ for i in tqdm.tqdm(range(len(time))):
 # plotting figures
 i = 3000
 
-
 plt.gca().invert_yaxis()
 plt.ylabel('Depth (m)')
 plt.xlabel('Time (hh:mm)')
@@ -248,7 +261,8 @@ plt.plot(dt_profile, smooth_depth_m, '.k', ms=3)
 plt.savefig(f'profile_data_{datestring}_python.png')
 
 # Filtering and bed detection
-filt_prof_data = cv2.blur(profile_data.copy(), ksize=(13,13)) ## couldn't find a hybrid median filter,ldata.erdc.dren.mil/
+filt_prof_data = cv2.blur(profile_data.copy(),
+                          ksize=(13, 13))  ## couldn't find a hybrid median filter,ldata.erdc.dren.mil/
 # used a bluring filter
 
 plt.figure(5)
@@ -256,7 +270,7 @@ plt.pcolormesh(dt_profile, rangev[2] / 1000, filt_prof_data.T, shading='auto')
 plt.plot(dt_profile, smooth_depth_m, '.k', ms=3)
 plt.title('filtered version of profile plot')
 plt.ylabel('Depth (m)')
-plt.ylim([0,12])
+plt.ylim([0, 12])
 plt.xlabel('Time (hh:mm)')
 plt.colorbar()
 plt.tight_layout()

@@ -12,7 +12,7 @@ import glob
 dirstr = '01-05-2023'  # alos with emlid ppk GPS saved and processed
 dirstr = '20230327'
 dd = glob.glob(os.path.join('SampleData', dirstr,"*.dat"))  # find dat files for sonar
-print(f'found {len(dd)} sonar files for procesing')# loop through files
+print(f'found {len(dd)} sonar files for processing')# loop through files
 # for ii in range(len(dd)):
 #     print(str(ii + 1) + ' ' + dd[ii])
 #

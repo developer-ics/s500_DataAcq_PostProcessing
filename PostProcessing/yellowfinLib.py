@@ -4,12 +4,13 @@ import datetime
 import matplotlib.pyplot as plt
 import glob
 
-def read_emlid_pos(fldrlistPPK, plot=False):
+def read_emlid_pos(fldrlistPPK, plot=False, saveFname=None):
     """read and parse multiple pos files in multiple folders provided
     
     :param fldrlistPPK: list of folders to provide
     :param plot: if a path name will save a QA/QC plots (default=False)
-    :return:
+    :param saveFname: will save file as h5
+    :return: dataframe with loaded data from pos file
     """
     T_ppk = pd.DataFrame()
     for fldr in sorted(fldrlistPPK):
@@ -27,7 +28,6 @@ def read_emlid_pos(fldrlistPPK, plot=False):
         except:
             continue
     T_ppk['datetime'] = pd.to_datetime(T_ppk['datetime'], format='%Y/%m/%d %H:%M:%S.%f')
-    
     
     # now make plot of both files
     # first llh file
@@ -52,3 +52,5 @@ def read_emlid_pos(fldrlistPPK, plot=False):
         plt.tight_layout()
         plt.savefig(plot+'elev_Q')
         plt.close()
+    
+    return T_ppk

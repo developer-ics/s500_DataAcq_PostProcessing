@@ -101,7 +101,7 @@ for fi in range(len(dd)):
                 decimation[ij] = struct.unpack('B', fid.read(1))[0]
                 reserved[ij] = struct.unpack('B', fid.read(1))[0]
                 num_results[ij] = struct.unpack('H', fid.read(2))[0]
-`               power_results[ij] = struct.unpack('H', fid.read(2))[0]
+                power_results[ij] = struct.unpack('H', fid.read(2))[0]
                 rangev[ij,0:num_results[ij]] = np.linspace(start_mm[ij], start_mm[ij] + length_mm[ij], num_results[ij])
                 dt_profile[ij] = dt[ii] # assign datetime from data written
                 # profile_data_single = [] #= np.empty((num_results[-1], ), dtype=np.uint16)

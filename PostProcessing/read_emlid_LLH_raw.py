@@ -47,6 +47,7 @@ T_LLH['lon'] = T_LLH[2]
 
 
 # now load  Post processed kinematic PPK files from the pos file that was post processed in emlid
+
 T_ppk = pd.DataFrame()
 for fldr in sorted(fldrlistPPK):
     # this is before ppk processing so should agree with nmea strings
@@ -87,4 +88,5 @@ plt.legend()
 plt.tight_layout()
 # plt.savefig(f'PPK{fs}.png')
 
-T2.to_csv(f'PPK{fs}.csv', index=False)
+T_ppk.to_hdf(f'{folderstr}_ppkRaw.h5')
+

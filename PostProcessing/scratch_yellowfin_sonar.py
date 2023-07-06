@@ -2,7 +2,7 @@
 library"""
 from datetime import datetime
 import matplotlib
-from PostProcessing.yellowfinLib import loadSonarH5, plot_single_backscatterProfile, loadSonar_s500_binary
+from PostProcessing.yellowfinLib import load_h5_to_dictionary, plot_single_backscatterProfile, loadSonar_s500_binary
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 import numpy as np

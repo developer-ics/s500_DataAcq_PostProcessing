@@ -289,6 +289,31 @@ def mLabDatetime_to_epoch(dt):
     delta = dt - epoch
     return delta.total_seconds()
 
+def convertEllipsoid2NAVD88(lats, lons, ellipsoids, geoidFile='g2012bu8.bin'):
+    """converts elipsoid values to NAVD88's
+   
+   NOTE: if this is the first time you're using this, you'll likely have to go get the geoid bin file.  Code was
+        developed using the uncompressed bin file.  It is unclear if the pygeodesy library requires the bin file to
+        be uncompressed.  https://geodesy.noaa.gov/GEOID/GEOID12B/GEOID12B_CONUS.shtml
+  
+  :param lats:
+  :param lons:
+  :param ellipsoids: raw sattelite elipsoid values.
+  :param geoidFile: pull from https://geodesy.noaa.gov/GEOID/GEOID12B/GEOID12B_CONUS.shtml
+  :return: NAVD88 values
+  """
+    from pygeodesy import geoids
+    assert len(lons) == len(lats) == len(ellipsoids), 'lons/lats/elipsoids need to be of same length'
+    try:
+        instance = geoids.GeoidG2012B(geoidFile)
+    except ImportError:
+        print("if this is the first time you're using this, you'll likely have to go get the geoid bin file.  Code was "
+              "developed using the uncompressed bin file.  It is unclear if the pygeodesy library requires the bin file to"
+              " be uncompressed.  https://geodesy.noaa.gov/GEOID/GEOID12B/GEOID12B_CONUS.shtml")
+        import wget
+        wget.download("https://www.ngs.noaa.gov/PC_PROD/GEOID12B/Format_unix/g2012bu0.bin")
+    geoidHeight = instance.height(lats, lons)
+    return ellipsoids - geoidHeight
 
 def load_yellowfin_NMEA_files(fpath, saveFname, plotfname=False, verbose=False):
     """loads and possibly plots NMEA data from Emlid Reach M2 on yellowin
@@ -405,3 +430,26 @@ def load_yellowfin_NMEA_files(fpath, saveFname, plotfname=False, verbose=False):
         plt.plot(pc_time_gga, altMSL, '.-', label='altMSL')
         plt.savefig(plotfname)
         plt.close()
+
+
+def findTimeShiftCrossCorr(signal1, signal2, sampleFreq=1):
+    """  Finds time shift between two signals.
+    
+    :param signal1: a signal of same length of signal 2
+    :param signal2: a signal of same length of signal 1
+    :param sampleFreq: sampling frequency, in HZ
+    :return: phase lag in samples, phase lag in time
+    """
+    import numpy as np
+    from scipy.signal import correlate
+    assert len(signal1) == len(signal2), 'signals need to be the same lenth'
+    # load your time series data into two separate arrays, let's call them signal1 and signal2.
+    # compute the cross-correlation between the two signals using the correlate function:
+    cross_corr = correlate(signal1, signal2)
+    # Identify the index of the maximum value in the cross-correlation:
+    max_index = np.argmax(np.abs(cross_corr))
+    # Compute the phase lag in terms of the sample offset:
+    phase_lag_samples = max_index - (len(signal1) - 1)
+    # # If desired, convert the phase lag to time units (e.g., seconds):
+    phase_lag_seconds = phase_lag_samples * sampleFreq
+    return phase_lag_samples, phase_lag_seconds

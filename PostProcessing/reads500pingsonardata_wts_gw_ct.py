@@ -2,7 +2,7 @@ import os
 import struct
 from datetime import datetime
 from datetime import timedelta
-
+import tqdm
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
@@ -38,7 +38,7 @@ rangev = np.zeros((allocateSize, 100000))              # time by depth
 profile_data = np.zeros((allocateSize, allocateSize))  # time by depth
 # read first one ping and pre-allocate arrays
 # take time of application and ping rate to generate time allocation size (max run time of vehicle)
-for fi in range(len(dd)):
+for fi in tqdm.tqdm(range(len(dd))):
     with open(dd[fi], 'rb') as fid:
         fname = dd[fi]
         print(f'processing {fname}')
@@ -122,11 +122,14 @@ for fi in range(len(dd)):
                     #     print(f'didn not read {read}, ii {ii}, ij {ij}')
                 # profile_data.append(profile_data_single)
 print('now clean up data and memory because we couldn''t pre-allocate')
+# clean up array's from over allocation to free up memory and data
+idxShort = (num_results != 0 ).sum() #np.argwhere(num_results != 0).max()  # identify index for end of data to keep
+num_results = np.median(num_results[:idxShort]).astype(int) #num_results[:idxShort][0]
 
-idxShort = np.argwhere(timestamp_msec!=0).max()
+# make data frame for output
+
 smooth_depth_m = smooth_depth_m[:idxShort]
 reserved = reserved[:idxShort]
-num_results = num_results[:idxShort]
 start_mm = start_mm[:idxShort]
 length_mm = length_mm[:idxShort]
 start_ping_hz = start_ping_hz[:idxShort]
@@ -144,10 +147,11 @@ is_db = is_db[:idxShort]
 gain_index = gain_index[:idxShort]
 decimation = decimation[:idxShort]
 dt_profile = dt_profile[:idxShort]
-# num results = 2222
-#rangev,  profile_data (maybe others) need to be handled
-rangev = rangev[:idxShort, :np.median(num_results).astype(int)]
-profile_data = profile_data[:idxShort, :np.median(num_results).astype(int)].T
+
+# rangev,  profile_data need to be handled separately
+rangev = rangev[:idxShort, :num_results]
+profile_data = profile_data[:idxShort, :num_results].T
+
 import h5py
 outfname = 'myfile.h5'
 with h5py.File(outfname, 'w') as hf:

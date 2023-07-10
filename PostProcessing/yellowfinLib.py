@@ -79,7 +79,7 @@ def loadSonar_s500_binary(dataPath, outfname=None):
     print(f'found {len(dd)} sonar files for procesing')  # loop through files
     # https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api
     ij, i3 = 0, 0
-    allocateSize = 50000
+    allocateSize = 50000  # some rediculously large number that memory can still hold.
     # initialize variables for loop
     distance, confidence, transmit_duration = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(
         allocateSize)  # [],
@@ -98,8 +98,8 @@ def loadSonar_s500_binary(dataPath, outfname=None):
     # these are complicated preallocations
     txt, dt_profile, dt_txt, dt = np.zeros(allocateSize, dtype=object), np.zeros(allocateSize, dtype=object), \
                                   np.zeros(allocateSize, dtype=object), np.zeros(allocateSize, dtype=object)
-    rangev = np.zeros((allocateSize, 100000))
-    profile_data = np.zeros((allocateSize, allocateSize))
+    rangev = np.zeros((allocateSize*2, allocateSize)) #arbitrary large value for time
+    profile_data = np.zeros((allocateSize*2, allocateSize))
     
     for fi in tqdm.tqdm(range(len(dd))):
         with open(dd[fi], 'rb') as fid:
@@ -183,12 +183,13 @@ def loadSonar_s500_binary(dataPath, outfname=None):
                     ij += 1
     
     # clean up array's from over allocation to free up memory and data
-    idxShort = np.argwhere(timestamp_msec != 0).max()  # identify index for end of data to keep
+    idxShort = (num_results != 0 ).sum() #np.argwhere(num_results != 0).max()  # identify index for end of data to keep
+    num_results = np.median(num_results[:idxShort]).astype(int) #num_results[:idxShort][0]
+
     # make data frame for output
     
     smooth_depth_m = smooth_depth_m[:idxShort]
     reserved = reserved[:idxShort]
-    num_results = num_results[:idxShort]
     start_mm = start_mm[:idxShort]
     length_mm = length_mm[:idxShort]
     start_ping_hz = start_ping_hz[:idxShort]
@@ -208,8 +209,8 @@ def loadSonar_s500_binary(dataPath, outfname=None):
     dt_profile = dt_profile[:idxShort]
     
     # rangev,  profile_data need to be handled separately
-    rangev = rangev[:idxShort, :np.median(num_results).astype(int)]
-    profile_data = profile_data[:idxShort, :np.median(num_results).astype(int)].T
+    rangev = rangev[:idxShort, :num_results]
+    profile_data = profile_data[:idxShort, :num_results].T
     
     # now save output file (can't save as pandas because of multi-dimensional sonar data)
     if outfname is not None:

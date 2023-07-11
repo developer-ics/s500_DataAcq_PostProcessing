@@ -1,20 +1,14 @@
 import os
 import struct
 import datetime as DT
-from datetime import datetime
-
 import h5py
 import netCDF4 as nc
 import numpy as np
 import pandas as pd
-import datetime
 import matplotlib.pyplot as plt
 import glob
 import tqdm
 from matplotlib import pyplot as plt
-
-# from PostProcessing.scratch_yellowfin import sonarRange
-
 
 def read_emlid_pos(fldrlistPPK, plot=False, saveFname=None):
     """read and parse multiple pos files in multiple folders provided
@@ -29,7 +23,7 @@ def read_emlid_pos(fldrlistPPK, plot=False, saveFname=None):
         # this is before ppk processing so should agree with nmea strings
         fn = glob.glob(os.path.join(fldr, "*.pos"))[0]
         try:
-            colNames = ['datetime', 'lat', 'lon', 'height', 'Q', 'ns', 'sdn(m)',  'sde(m)', 'sdu(m)', \
+            colNames = ['datetime', 'lat', 'lon', 'height', 'Q', 'ns', 'sdn(m)',  'sde(m)', 'sdu(m)',
                         'sdne(m)', 'sdeu(m)',  'sdun(m)', 'age(s)',  'ratio']
             Tpos = pd.read_csv(fn, delimiter=r'\s+ ', header=10, names=colNames, engine='python')
             print(f'loaded {fn}')
@@ -209,7 +203,7 @@ def loadSonar_s500_binary(dataPath, outfname=None):
     dt_profile = dt_profile[:idxShort]
     
     # rangev,  profile_data need to be handled separately
-    rangev = rangev[:idxShort, :num_results]
+    rangev = rangev[0, :num_results]
     profile_data = profile_data[:idxShort, :num_results].T
     
     # now save output file (can't save as pandas because of multi-dimensional sonar data)
@@ -272,7 +266,7 @@ def plot_single_backscatterProfile(fname, time, sonarRange, profile_data, this_p
     ax2.plot(profile_data[index], sonarRange[0], alpha=1)
     ax2.plot(profile_data[index, np.argmin(np.abs(sonarRange[index] - this_ping_depth_m[index]))], this_ping_depth_m[
         index], 'grey', marker='X', ms=10, label='this ping')
-    ax2.plot(profile_data[index, np.argmin(np.abs(sonarRange[index] - smooth_depth_m[index]))], smooth_depth_m[index], \
+    ax2.plot(profile_data[index, np.argmin(np.abs(sonarRange[index] - smooth_depth_m[index]))], smooth_depth_m[index],
              'black', marker='X', ms=10, label='smoothed bottom')
     ax2.legend()
     

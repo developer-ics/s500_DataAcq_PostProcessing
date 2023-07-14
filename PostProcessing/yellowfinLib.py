@@ -10,6 +10,8 @@ import glob
 import tqdm
 from matplotlib import pyplot as plt
 
+
+
 def read_emlid_pos(fldrlistPPK, plot=False, saveFname=None):
     """read and parse multiple pos files in multiple folders provided
     
@@ -33,7 +35,7 @@ def read_emlid_pos(fldrlistPPK, plot=False, saveFname=None):
         
         except:
             continue
-    T_ppk['datetime'] = pd.to_datetime(T_ppk['datetime'], format='%Y/%m/%d %H:%M:%S.%f')
+    T_ppk['datetime'] = pd.to_datetime(T_ppk['datetime'], format='%Y/%m/%d %H:%M:%S.%f', utc=True)
     
     # now make plot of both files
     # first llh file
@@ -62,15 +64,16 @@ def read_emlid_pos(fldrlistPPK, plot=False, saveFname=None):
     return T_ppk
 
 
-def loadSonar_s500_binary(dataPath, outfname=None):
+def loadSonar_s500_binary(dataPath, outfname=None, verbose=False):
     """Loads and concatenates all of the binary files (*.dat) located in the dataPath location
     
     :param dataPath: search path for sonar data files
     :param outfname: string to save h5 file. If None it will skip this process. (Default =None)
+    :param verbose: turn on print statement for file names as loading
     :return: pandas data frame of sonar data
     """
     dd = glob.glob(os.path.join(dataPath, "*.dat"))  # find dat files for sonar
-    print(f'found {len(dd)} sonar files for procesing')  # loop through files
+    print(f'found {len(dd)} sonar files for processing')  # loop through files
     # https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api
     ij, i3 = 0, 0
     allocateSize = 50000  # some rediculously large number that memory can still hold.
@@ -98,7 +101,7 @@ def loadSonar_s500_binary(dataPath, outfname=None):
     for fi in tqdm.tqdm(range(len(dd))):
         with open(dd[fi], 'rb') as fid:
             fname = dd[fi]
-            print(f'processing {fname}')
+            if verbose: print(f'processing {fname}')
             xx = fid.read()
             st = [i + 1 for i in range(len(xx)) if xx[i:i + 2] == b'BR']
             # initalize variables for loop
@@ -211,9 +214,9 @@ def loadSonar_s500_binary(dataPath, outfname=None):
         with h5py.File(outfname, 'w') as hf:
             hf.create_dataset('min_pwr', data=min_pwr)
             hf.create_dataset('ping_duration', data=ping_duration_sec)
-            hf.create_dataset('time', data=nc.date2num(dt_profile, 'seconds since 1970-01-01'))
+            hf.create_dataset('time', data=nc.date2num(dt_profile, 'seconds since 1970-01-01')) # TODO: confirm tz
             hf.create_dataset('smooth_depth_m', data=smooth_depth_m)
-            hf.create_dataset('profile_data', data=profile_data.T)  # putting time as first axis
+            hf.create_dataset('profile_data', data=profile_data)  # putting time as first axis
             hf.create_dataset('num_results', data=num_results)
             hf.create_dataset('start_mm', data=start_mm)
             hf.create_dataset('length_mm', data=length_mm)
@@ -448,3 +451,59 @@ def findTimeShiftCrossCorr(signal1, signal2, sampleFreq=1):
     # # If desired, convert the phase lag to time units (e.g., seconds):
     phase_lag_seconds = phase_lag_samples * sampleFreq
     return phase_lag_samples, phase_lag_seconds
+
+
+def loadLLHfiles(flderlistLLH):
+    # first load the LLH quick processed data
+    T_LLH = pd.DataFrame()
+    for fldr in sorted(flderlistLLH):
+        # this is before ppk processing so should agree with nmea strings
+        fn = glob.glob(os.path.join(fldr, "*"))[0]
+        try:
+            T = pd.read_csv(fn, delimiter='  ', header=None, engine='python')
+            print(f'loaded {fn}')
+            if all(T.iloc[-1]):  #if theres nan's in the last row
+                T = T.iloc[:-1] # remove last row
+            T_LLH = pd.concat([T_LLH, T]) # merge multiple files to single dataframe
+        
+        except:
+            continue
+    
+    T_LLH['datetime'] = pd.to_datetime(T_LLH[0], format='%Y/%m/%d %H:%M:%S.%f', utc=True)
+    T_LLH['epochTime'] = T_LLH['datetime'].apply(lambda x: x.timestamp())
+
+    T_LLH['lat'] =  T_LLH[1]
+    T_LLH['lon'] = T_LLH[2]
+    return T_LLH
+
+
+def loadPPKdata(fldrlistPPK):
+    """This function loads multiple *.pos files that are output from the emlid post processing software.  it will
+    combine pos files that are in individual folders
+    
+    :param fldrlistPPK: a list of folders with ind
+    :return: a data frame with loaded ppk data
+    """
+    
+    T_ppk = pd.DataFrame()
+    for fldr in sorted(fldrlistPPK):
+        # this is before ppk processing so should agree with nmea strings
+        fn = glob.glob(os.path.join(fldr, "*.pos"))
+        assert len(fn) > 1, " This function assumes only one pos file per folder, please check"
+        fn=fn[0]
+        try:
+            colNames = ['datetime', 'lat', 'lon', 'height', 'Q', 'ns', 'sdn(m)',  'sde(m)', 'sdu(m)', \
+                        'sdne(m)', 'sdeu(m)',  'sdun(m)', 'age(s)',  'ratio']
+            Tpos = pd.read_csv(fn, delimiter=r'\s+ ', header=10, names=colNames, engine='python')
+            print(f'loaded {fn}')
+            if all(Tpos.iloc[-1]):  #if theres nan's in the last row
+                Tpos = Tpos.iloc[:-1] # remove last row
+            Tpos['datetime'] = pd.to_datetime(Tpos['datetime'], format='%Y/%m/%d %H:%M:%S.%f', utc=True)
+            T_ppk = pd.concat([T_ppk, Tpos], ignore_index=True) # merge multiple files to single dataframe
+            
+        except:  # this is in the event there is no data in the pos files
+            continue
+    T_ppk['datetime'] = pd.to_datetime(T_ppk['datetime'], format='%Y/%m/%d %H:%M:%S.%f', utc=True)
+    T_ppk['epochTime'] = T_ppk['datetime'].apply(lambda x: x.timestamp())
+    print("check epoch time conversion!")
+    return T_ppk

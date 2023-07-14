@@ -156,7 +156,7 @@ import h5py
 outfname = 'myfile.h5'
 with h5py.File(outfname, 'w') as hf:
     hf.create_dataset('smooth_depth_m', data=smooth_depth_m)
-    hf.create_dataset('profile_data', data=profile_data)
+    hf.create_dataset('profile_data', data=profile_data.T)
     hf.create_dataset('num_results', data=num_results)
     hf.create_dataset('start_mm', data=start_mm)
     hf.create_dataset('length_mm', data=length_mm)

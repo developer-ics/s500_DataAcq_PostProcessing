@@ -1,8 +1,7 @@
 import os
-import pandas as pd
-import datetime
 import matplotlib.pyplot as plt
-import glob
+from PostProcessing.yellowfinLib import loadLLHfiles, loadPPKdata
+
 ## converted read_emlid_LLH_raw.m in chatGPT on 19 February 2023
 
 #Note that in Python, the code needs to explicitly import the necessary libraries and functions,
@@ -20,52 +19,17 @@ import glob
 # fs = '20230105141705'
 folderstr = 20230327
 rootDir = f'/data/yellowfin/{folderstr}'
+ppkOutPath=f'/data/yellowfin/{folderstr}/{folderstr}_ppkRaw.h5'
 # find folders that have name rinex in it and aren't zip files (these contain the pos files)
 fldrlistLLH, fldrlistPPK = [], []
-[fldrlistPPK.append(fname)  for fname in os.listdir(rootDir) if 'RINEX' in fname and '.zip' not in fname]
-[fldrlistLLH.append(fname)  for fname in os.listdir(rootDir) if 'LLH' in fname and '.zip' not in fname]
-
-
-# first load the LLH quick processed data
-T_LLH = pd.DataFrame()
-for fldr in sorted(fldrlistLLH):
-    # this is before ppk processing so should agree with nmea strings
-    fn = glob.glob(os.path.join(rootDir, fldr, "*"))[0]
-    try:
-        T = pd.read_csv(fn, delimiter='  ', header=None, engine='python')
-        print(f'loaded {fn}')
-        if all(T.iloc[-1]):  #if theres nan's in the last row
-            T = T.iloc[:-1] # remove last row
-        T_LLH = pd.concat([T_LLH, T]) # merge multiple files to single dataframe
-        
-    except:
-        continue
-
-T_LLH['datetime'] = pd.to_datetime(T_LLH[0], format='%Y/%m/%d %H:%M:%S.%f')
-T_LLH['lat'] =  T_LLH[1]
-T_LLH['lon'] = T_LLH[2]
-
+[fldrlistPPK.append(os.path.join(rootDir,fname))  for fname in os.listdir(rootDir) if 'RINEX' in fname and '.zip' not in
+                    fname]
+[fldrlistLLH.append(os.path.join(rootDir, fname))  for fname in os.listdir(rootDir) if 'LLH' in fname and '.zip' not in
+                    fname]
 
 # now load  Post processed kinematic PPK files from the pos file that was post processed in emlid
-
-T_ppk = pd.DataFrame()
-for fldr in sorted(fldrlistPPK):
-    # this is before ppk processing so should agree with nmea strings
-    fn = glob.glob(os.path.join(rootDir, fldr, "*.pos"))[0]
-    try:
-        colNames = ['datetime', 'lat', 'lon', 'height', 'Q', 'ns', 'sdn(m)',  'sde(m)', 'sdu(m)', \
-                    'sdne(m)', 'sdeu(m)',  'sdun(m)', 'age(s)',  'ratio']
-        Tpos = pd.read_csv(fn, delimiter=r'\s+ ', header=10, names=colNames, engine='python')
-        print(f'loaded {fn}')
-        if all(Tpos.iloc[-1]):  #if theres nan's in the last row
-            Tpos = Tpos.iloc[:-1] # remove last row
-        T_ppk = pd.concat([T_ppk, Tpos]) # merge multiple files to single dataframe
-        
-    except:
-        continue
-T_ppk['datetime'] = pd.to_datetime(T_ppk['datetime'], format='%Y/%m/%d %H:%M:%S.%f')
-
-
+T_LLH = loadLLHfiles(fldrlistLLH)
+T_ppk = loadPPKdata(fldrlistPPK)
 # now make plot of both files
 # first llh file
 plt.plot(T_LLH['lon'], T_LLH['lat'], '.-m', label = 'LLH file')
@@ -88,5 +52,5 @@ plt.legend()
 plt.tight_layout()
 # plt.savefig(f'PPK{fs}.png')
 
-T_ppk.to_hdf(f'{folderstr}_ppkRaw.h5')
-
+T_ppk.to_hdf(ppkOutPath, 'ppk')
+print(f'saved {ppkOutPath}')

@@ -490,7 +490,7 @@ def loadPPKdata(fldrlistPPK):
         # this is before ppk processing so should agree with nmea strings
         fn = glob.glob(os.path.join(fldr, "*.pos"))
         assert len(fn) > 1, " This function assumes only one pos file per folder, please check"
-        fn=fn[0]
+        fn = fn[np.argwhere(['events' not in f for f in fn]).squeeze()] # take the file that is not events
         try:
             colNames = ['datetime', 'lat', 'lon', 'height', 'Q', 'ns', 'sdn(m)',  'sde(m)', 'sdu(m)', \
                         'sdne(m)', 'sdeu(m)',  'sdun(m)', 'age(s)',  'ratio']
@@ -505,5 +505,4 @@ def loadPPKdata(fldrlistPPK):
             continue
     T_ppk['datetime'] = pd.to_datetime(T_ppk['datetime'], format='%Y/%m/%d %H:%M:%S.%f', utc=True)
     T_ppk['epochTime'] = T_ppk['datetime'].apply(lambda x: x.timestamp())
-    print("check epoch time conversion!")
     return T_ppk

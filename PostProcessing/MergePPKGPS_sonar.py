@@ -15,19 +15,36 @@ dirstr = '01-11-2023'
 dirstr = '12-21-2022'  # with emlid ppk GPS saved and processed
 dirstr = '01-05-2023'
 dirstr = '20230327'  # has post processed Emlid data in folder. (*.pos file, maybe multiple)
+database = "/home/spike/repos/yellowFin_AcqProcessing/SampleData"
+timeString = "20230105"  #""20230417" # "20230327"
+datadir = os.path.join(database,timeString)
+plotDir = os.path.join(datadir,'figures')
+os.makedirs(plotDir, exist_ok=True)  # make folder structure if its not already made
+# sonar data
+fpathSonar = os.path.join(datadir, 's500') # reads sonar from here
+saveFnameSonar = os.path.join(datadir, f'{timeString}_sonarRaw.h5') #saves sonar file here
+
+#NMEA data from sonar, this is not Post Processed Kinematic (PPK) data.  It is used for only cursory or
+# introductory look at the data
+fpathGNSS = os.path.join(datadir, 'nmeaData')  # load NMEA data from this location
+saveFnameGNSS = os.path.join(datadir, f'{timeString}_gnssRaw.h5')  # save nmea data to this location
+
+# RINEX data
+# look for all subfolders with RINEX in the folder name inside the "datadir" emlid ppk processor
+saveFnamePPK = os.path.join(datadir, f'{timeString}_ppkRaw.h5')
 
 ########################################################################################################################
-GPSfname = f"/data/yellowfin/{dirstr}/{dirstr}_gnssRaw.h5" # comes from readNMEAfiles.py
-PPKGPSfname = f"/data/yellowfin/{dirstr}/{dirstr}_ppkRaw.h5" # comes from read_emlid_LLH_raw.py
-S1fname = f"/data/yellowfin/{dirstr}/{dirstr}_sonarRaw.h5" # comes from reads500pingsonardata_wts_gw_ct.py
+# GPSfname = f"/data/yellowfin/{dirstr}/{dirstr}_gnssRaw.h5" # comes from readNMEAfiles.py
+# PPKGPSfname = f"/data/yellowfin/{dirstr}/{dirstr}_ppkRaw.h5" # comes from read_emlid_LLH_raw.py
+# S1fname = f"/data/yellowfin/{dirstr}/{dirstr}_sonarRaw.h5" # comes from reads500pingsonardata_wts_gw_ct.py
 ET2UTC = 4*60*60 # time in seconds to adjust to UTC from ET (varies depending on time of year)
 # load all files
-GPS = yellowfinLib.load_h5_to_dictionary(GPSfname)
-ppkGPS = pd.read_hdf(PPKGPSfname)
+GPS = yellowfinLib.load_h5_to_dictionary(saveFnameGNSS)
+ppkGPS = pd.read_hdf(saveFnamePPK)
 ppkGPS['epochTime'] = ppkGPS['datetime'].apply(lambda x: x.timestamp()) - 18 # 18 is leap second
 # adjustment
 ppkGPS['datetime'] = ppkGPS['datetime'] - DT.timedelta(seconds=18) # making sure both are equal
-S1 = yellowfinLib.load_h5_to_dictionary(S1fname)
+S1 = yellowfinLib.load_h5_to_dictionary(saveFnameSonar)
 
 ppkGPS['GNSS_elevation_NAVD88'] = yellowfinLib.convertEllipsoid2NAVD88(ppkGPS['lat'], ppkGPS['lon'], ppkGPS['height'],
                                                    geoidFile="/home/spike/repos/yellowFin_AcqProcessing/g2012bu0.bin")

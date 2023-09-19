@@ -21,3 +21,4 @@ The post-processing work flow is listed below.
 
 Note data in python work flow are not using "sample data" archive,  but rather on the local machine
 in a location "/data/yellowfin/YYYYmmdd". this is assumed to be the root directory.
+in the YYYYmmdd folder there are assumed to be sub folders `nmeaData` and `s500` that have `*.dat` files in them 

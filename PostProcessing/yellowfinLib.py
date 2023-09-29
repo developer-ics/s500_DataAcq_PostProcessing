@@ -76,7 +76,7 @@ def loadSonar_s500_binary(dataPath, outfname=None, verbose=False):
     print(f'found {len(dd)} sonar files for processing')  # loop through files
     # https://docs.ceruleansonar.com/c/v/s-500-sounder/appendix-f-programming-api
     ij, i3 = 0, 0
-    allocateSize = 50000  # some rediculously large number that memory can still hold.
+    allocateSize = 20000  # some rediculously large number that memory can still hold.
     # initialize variables for loop
     distance, confidence, transmit_duration = np.zeros(allocateSize), np.zeros(allocateSize), np.zeros(
         allocateSize)  # [],
@@ -96,7 +96,7 @@ def loadSonar_s500_binary(dataPath, outfname=None, verbose=False):
     txt, dt_profile, dt_txt, dt = np.zeros(allocateSize, dtype=object), np.zeros(allocateSize, dtype=object), \
                                   np.zeros(allocateSize, dtype=object), np.zeros(allocateSize, dtype=object)
     rangev = np.zeros((allocateSize*2, allocateSize)) #arbitrary large value for time
-    profile_data = np.zeros((allocateSize*2, allocateSize))
+    profile_data = np.zeros((allocateSize*2, allocateSize)) ### spikes here
     
     for fi in tqdm.tqdm(range(len(dd))):
         with open(dd[fi], 'rb') as fid:
@@ -484,7 +484,7 @@ def loadPPKdata(fldrlistPPK):
     :param fldrlistPPK: a list of folders with ind
     :return: a data frame with loaded ppk data
     """
-    
+    assert len(fldrlistPPK), "there are not files in the list"
     T_ppk = pd.DataFrame()
     for fldr in sorted(fldrlistPPK):
         # this is before ppk processing so should agree with nmea strings

@@ -4,9 +4,9 @@ dirstr='01-11-2023'
 dirstr='12-21-2022' % with emlid ppk GPS saved and processed
 dirstr='01-05-2023'
 
-GPS=load(['nmea' dirstr '.mat'])
+GPS=load(['nmea' dirstr '.mat']) % comes from readNMEAfiles.m
 
-PPKGPS=load('PPK20230105141705.mat');
+PPKGPS=load('PPK20230105141705.mat'); % comes from read_emlid_LLH_raw.m
 
 %% compare gps data to make sure timing is ok
 figure(1);clf
@@ -34,7 +34,7 @@ sonar_time=S.dt_profile
 sonar_range=S.bed_detect_range';
 end
 
-if 1 % use the cerulean instantaenous bed detection since not sure about delay with smoothed 
+if 1 % use the cerulean instantaenous bed detection since not sure about delay with smoothed
 S1=load(['detected_range' dirstr '.mat'])
 sonar_time=S1.dt_txt(:)+hours(5);%convert to UTC
 sonar_range=S1.txt_depth(:);
@@ -44,7 +44,7 @@ figure(2);clf
 plot(sonar_time,sonar_range,'b')
 hold on
 plot(GPS.mat_time,GPS.altWGS84,'.g')
-hold on 
+hold on
 ppk_gpstime=PPKGPS.datetime_ppk-gps_leap_offset;
 plot(ppk_gpstime,PPKGPS.height_ell_ppk,'.r')
 
@@ -71,8 +71,8 @@ lati=PPKGPS.lat_ppk(indsp);loni=PPKGPS.lon_ppk(indsp);
 figure(40);clf
 ws=2100:2400 ;% pick a nice section with a heave effects visble in the echodata and gps
 
-ws2=2000:2500 ;% 
-% this data doesn't have it so adding artficially 
+ws2=2000:2500 ;%
+% this data doesn't have it so adding artficially
 csonar_range_i=sonar_range_i;
 csonar_range_i(ws)=csonar_range_i(ws)+.3*sin(ws/10)';
 
@@ -161,12 +161,12 @@ wgsz=32
   centerPoint = -10-wgsz;
   scalingIntensity = 4;
 %Then perform some operations to create your colormap. I have done this by altering the indices “x” at which each existing color lives, and then interpolating to expand or shrink certain areas of the spectrum.
-  xm = 1:length(cm); 
+  xm = 1:length(cm);
   xm = xm - (centerPoint-dataMin)*length(xm)/(dataMax-dataMin);
   xm = scalingIntensity * xm/max(abs(xm));
 %Next, select some function or operations to transform the original linear indices into nonlinear. In the last line, I then use “interp1” to create the new colormap from the original colormap and the transformed indices.
   xm = sign(xm).* exp(abs(xm));
-  xm = xm - min(xm); xm = xm*511/max(xm)+1; 
+  xm = xm - min(xm); xm = xm*511/max(xm)+1;
   ncm = interp1(xm, cm, 1:512);
 
 %contour(DEM,[],'caxis',[-18 -7],'colorbar',1,'colormap',cm,'ticklabels','nice','exaggerate',1,...
@@ -174,7 +174,7 @@ wgsz=32
 tanakacontour(DEM,[-14:.25:-2]-wgsz)
 %caxis([-14 -3]-wgsz)
 title('Yellow Fin survey')
-hold on 
+hold on
 %plot(x,y,'.k');
 sf =10;
 hs=scatter(x(1:sf:end),y(1:sf:end),12,z(1:sf:end),'o')

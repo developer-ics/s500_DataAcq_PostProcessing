@@ -1,9 +1,14 @@
 fs='20221221165017';
 fs='20230105141705';
-dirnm=['YF2Reachm2_solution_' fs '_LLH']
+if ispc
+    slash = '\';
+else
+    slash = '/';
+end
 
-dd=dir(dirnm)
-fn=[dirnm '\' dd(3).name]% this is before ppk processing so should agree with nmea strings
+dirnm=['SampleData' slash 'YF2Reachm2_solution_' fs '_LLH']
+dd=dir(dirnm);
+fn=[dirnm slash dd(3).name];% this is before ppk processing so should agree with nmea strings
 T=readtable(fn,'FileType','text');
 T.date=datetime(T.Var1,'Inputformat','yyyy/MM/dd');
 T.datetime=T.date+T.Var2;
@@ -16,11 +21,11 @@ plot(lon,lat,'o-m')
 
 
 %%
-dirnm=['.\YF2Reachm2_raw_' fs '_RINEX_3_03']
+dirnm=['SampleData' slash 'YF2Reachm2_raw_' fs '_RINEX_3_03']
 
 
 dd=dir(dirnm)
-fn=[dirnm '\YF2Reachm2_raw_' fs '.pos']% note the e-file has a slightly modifed header to allow matalab to read the varaible names
+fn=[dirnm slash 'YF2Reachm2_raw_' fs '.pos']% note the e-file has a slightly modifed header to allow matalab to read the varaible names
 opts = detectImportOptions(fn,'FileType','text');
 opts.DataLines=[11 Inf];
 opts.VariableNamesLine=10;

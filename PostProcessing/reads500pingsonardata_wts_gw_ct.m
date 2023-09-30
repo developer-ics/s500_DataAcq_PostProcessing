@@ -1,18 +1,26 @@
 clear
 %dirstr='01-11-2023'%  a small gird of goodwil pond in falmouth
-dirstr='12-21-2022' % with emlid ppk GPS saved and processed
-dirstr='01-05-2023' % alos with emlid ppk GPS saved and processed
+dirstr='12-21-2022'; % with emlid ppk GPS saved and processed
+dirstr='01-05-2023'; % also with emlid ppk GPS saved and processed
+dirstr='20230216'; % spicer's data
 
-dd=dir(['.\' dirstr '\*.dat'])
+if ispc
+    slash = '\';
+else
+    slash = '/';
+end
+
+dd=dir(['SampleData' slash dirstr slash '*.dat'])
 for ii=1:length(dd)
     disp([num2str(ii) ' ' (dd(ii).name)])
 end
 
 %%
-ij=0;i3=0
+ij=0;i3=0;
 for fi=1:length(dd) %5  20201218-101925265.bin ios new 500 khz
-    ['.\' dirstr '\' dd(fi).name]
-    fid=fopen( ['.\' dirstr '\' dd(fi).name]);
+    fname = ['SampleData' slash dirstr slash dd(fi).name];
+    disp(fname)
+    fid=fopen(fname);
     
     frewind(fid);
     xx=fread(fid,'uchar');
@@ -130,7 +138,7 @@ end
 %%
 figure(1);clf
 plot(smooth_depth_m,'.')
-yaxis([ 0 900])
+%yaxis([ 0 900])
 
 figure(4);clf
 %  pcolor(timestamp_msec/1000-timestamp_msec(1)./1000,rangev{1}/1000,(profile_data'))

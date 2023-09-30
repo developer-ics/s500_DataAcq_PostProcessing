@@ -1,0 +1,24 @@
+The post-processing work flow is listed below.
+1) read NMEA files from GPS (readNMEAfiles.*)
+    - this reads the NMEA files logged on the rasberry pi logger
+2) Read the sonar files (reads500pingsonardata_wts_gw_ct.*)
+    - this reads the full sonar backscatter data
+### work flow divergest depending on application
+
+3.a) Used for quick QA/QC (ignores any offset between sonar's data timestamp and vehicle/GPS timestamp)
+    3.a.1) mergeGPS_sonar.* - this ignores any quick QA/QC post survey
+
+3.b Used for full fidelity data
+3.b.1) get the binary files (ubx) from the emlid GPS
+    - Need base files (from something like UFCORS)
+    - Base files include *.[XX]o and *.[XX]n needed by
+3.b.2) use emlid studio to convert UBX -> Rinex format binarys
+    - software avialable here: https://docs.emlid.com/emlid-studio/#download-emlid-studio
+    - output from the emlid studio will be *.[XX]O where XX are year of data
+3.b.3) run read_emlid_LLH_raw.py  to generate ppk file used in next step
+3.b.4) mergePPKGPS_sonar.* - does cross-correlation between GPS heave of boat (flat bottom) and sonar data (bottom)
+
+
+Note data in python work flow are not using "sample data" archive,  but rather on the local machine
+in a location "/data/yellowfin/YYYYmmdd". this is assumed to be the root directory.
+in the YYYYmmdd folder there are assumed to be sub folders `nmeaData` and `s500` that have `*.dat` files in them 

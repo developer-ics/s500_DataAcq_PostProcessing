@@ -1,0 +1,10 @@
+% program   : ES 1.7
+% inp file  : F:/GDriveICS/My Drive/IntegratedCoastalSolutions/Builds/USGS-SC/PondTest2/YF3-reach-m_20231209172051\rinex_YF3-reach-m_raw_20231209172051\YF3-reach-m_raw_20231209172051.23O
+% inp file  : F:/GDriveICS/My Drive/IntegratedCoastalSolutions/Builds/USGS-SC/PondTest2/YF3-reach-m_20231209172051\rinex_YF3-reach-m_raw_20231209172051\YF3-reach-m_raw_20231209172051.23P
+% inp file  : F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Builds\USGS-SC\PondTest2\mafa343\mafa3430.23o
+% obs start : 2023/12/09 17:21:09.9 GPST (week2291 580869.9s)
+% obs end   : 2023/12/09 18:48:43.5 GPST (week2291 586123.5s)
+% ref pos   : 41.619743474 -70.540917976   -1.4651
+%
+% (lat/lon/height=WGS84/ellipsoidal,Q=1:fix,2:float,3:sbas,4:dgps,5:single,6:ppp,ns=# of satellites)
+%  GPST                  latitude(deg) longitude(deg)  height(m)   Q  ns   sdn(m)   sde(m)   sdu(m)  sdne(m)  sdeu(m)  sdun(m) age(s)  ratio

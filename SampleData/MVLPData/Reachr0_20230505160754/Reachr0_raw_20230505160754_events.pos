@@ -1,0 +1,10 @@
+% program   : ES 1.5
+% inp file  : D:/odrive/Google Drive  WHOI/A_Projects/SERDP/SERDP23_25Project/Surveys/05_05_23/Reachr0_raw_20230505160754_UBX\rinex_Reachr0_raw_20230505160754\Reachr0_raw_20230505160754.23O
+% inp file  : D:\odrive\Google Drive  WHOI\A_Projects\SERDP\SERDP23_25Project\Surveys\05_05_23\BaseStation\log0505b.23N
+% inp file  : D:\odrive\Google Drive  WHOI\A_Projects\SERDP\SERDP23_25Project\Surveys\05_05_23\BaseStation\log0505b.23o
+% obs start : 2023/05/05 16:08:28.2 GPST (week2260 490108.2s)
+% obs end   : 2023/05/05 18:31:02.2 GPST (week2260 498662.2s)
+% ref pos   : 41.349054385 -70.639021128    3.8700
+%
+% (lat/lon/height=WGS84/ellipsoidal,Q=1:fix,2:float,3:sbas,4:dgps,5:single,6:ppp,ns=# of satellites)
+%  GPST                  latitude(deg) longitude(deg)  height(m)   Q  ns   sdn(m)   sde(m)   sdu(m)  sdne(m)  sdeu(m)  sdun(m) age(s)  ratio

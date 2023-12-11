@@ -1,3 +1,5 @@
+% this file should be located in thee top level of data directory
+
 clear;close('all')
 survey_day=datetime(2023,5,5)
 fs=char(datetime(survey_day,'Format','MM-dd-yyyy'))

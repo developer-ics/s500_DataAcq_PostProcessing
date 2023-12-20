@@ -7,7 +7,7 @@ addpath('F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Ye
 data_dir=pwd
 
 odir=[data_dir '\matfiles_'  fs2 '\'];% location of matfiles that are stored in processing
-godir=[data_dir '\image_files_'  fs2 '\'];% location of  graphicsfiles that are generated in processing
+godir=[data_dir '\image_files_'  fs2 '\'];% location of  graphics files that are generated in processing
 mkdir(odir)
 mkdir(godir)
 
@@ -24,7 +24,7 @@ keep('survey_day','fs','fs2','odir','godir','data_dir')
 % where data_dir =pwdis the location of this script
 dirstr=[data_dir '\Data\s500\' fs]
 use_txt_depth_strings=0
-int_pro=0  % processing of full intensity profile, usually should be zero . built in bed detection is suffcient
+int_pro=0  % processing of full intensity profile, usually should be zero . built in bed detection is usually suffcient
 system_default_sound_speed=1500;
 %measured_sound_speed=1480;
 d=2
@@ -50,7 +50,9 @@ SONAR_thresh=2
 % you can change these manually by editing the generated
 % s3_START_END_TIMES_*.mat mat file
 sonar_start_time_adjust=minutes(3);% delay the start5
-sonar_end_time_adjust=-minutes(4.5);% advance  the end
+sonar_end_time_adjust=-minutes(22);% advance  the end
+%sonar_end_time_adjust=-minutes(4.5);% advance  the end
+
 processing_time=seconds(.7);
 s3_Set_start_end_time_sync
 % makes figures(6) and 7
@@ -82,7 +84,7 @@ dirnm=[data_dir '\YF3-reach-m_' fs2 '*']
 %the below can be used to convert ellopsiodal height data to othrometric
 %height with some small error due to spatialvariablity if geoid
 %Emlid data from Emlid studio is usually output in ellopsiodal height
-ell2navd88 = 29.028 % from https://vdatum.noaa.gov/vdatumweb/
+ell2ortho= 29.028 % in meters. from https://vdatum.noaa.gov/vdatumweb/
 %ell2navd88 = 0 % the MArtha's Vineyard example data was processed in orthemetric height
 
 s5_read_emlid_LLH_PPK
@@ -107,6 +109,10 @@ keep('survey_day','fs','fs2','odir','godir','data_dir')
 use_resync=0;
 gps_leap_offset=seconds(18)
 processing_delay=seconds(0)
+sync_vert_offset=0; % to make figure(20) line  red and blue line overlap vertically
+xl(1)=datetime(2023,12,9,18,0,0,'TimeZone','UTC');% pick a period with sonar variations due to heave not bed changes
+xl(2)=datetime(2023,12,9,18,8,0,'TimeZone','UTC');% top plot fo figure(20) shows whole data set and bottom plot shows syncing region
+
 make_maps_ppk=1;
 s6_MergePPKGPS_sonar
 % makes figures (16) to (24)

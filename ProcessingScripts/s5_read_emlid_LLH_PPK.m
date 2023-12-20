@@ -57,27 +57,27 @@ legend([hk hg],'LLH GNSS data before PPK processing','PPK data')
 %%  saves ppk  and q1 only  nav88height data
 figure(15);clf
 %height_ell_ppk=func_despike_phasespace(T2.height_m_);
-height_navd88_ppk=T2.height_m_+ ell2navd88;
+height_datum_ppk=T2.height_m_+ ell2ortho
 % filter length is 151 / 5=30 s. thresh level of 12 seems to work 
-%clean_height_navd88_ppk=clean0(T2.height_m_,251,12) + ell2navd88 ;
-clean_height_navd88_ppk=hampel(T2.height_m_,251,6) + ell2navd88 ;
+%clean_height_datum_ppk=clean0(T2.height_m_,251,12) + ell2ortho ;
+clean_height_datum_ppk=hampel(T2.height_m_,251,6) + ell2ortho ;
 
-q1_clean_height_navd88_ppk=clean_height_navd88_ppk;
+q1_clean_height_datum_ppk=clean_height_datum_ppk;
 inds=imdilate(T2.Q~=1,ones(7 ,1));% imdilate as points on either side of q 1 transition are often bad
-q1_clean_height_navd88_ppk(inds)=NaN;
+q1_clean_height_datum_ppk(inds)=NaN;
 subplot(311)
-plot(datetime_ppk,T2.height_m_+ ell2navd88,'.-b')
+plot(datetime_ppk,T2.height_m_+ ell2ortho,'.-b')
 hold on
-clean_height_navd88_ppk=clean_height_navd88_ppk(ppk_ind);
-plot(datetime_ppk_g,clean_height_navd88_ppk,'-c')
-title(" Despiked Navd88 Height")
+clean_height_datum_ppk=clean_height_datum_ppk(ppk_ind);
+plot(datetime_ppk_g,clean_height_datum_ppk,'-c')
+title(" Despiked datum Height")
 
 subplot(312)
-plot(datetime_ppk,T2.height_m_+ ell2navd88,'.-b')
+plot(datetime_ppk,T2.height_m_+ ell2ortho,'.-b')
 hold on
-q1_clean_height_navd88_ppk=q1_clean_height_navd88_ppk(ppk_ind);
-plot(datetime_ppk_g,q1_clean_height_navd88_ppk,'-r')
-title(" Despiked Q1 Navd88 Height")
+q1_clean_height_datum_ppk=q1_clean_height_datum_ppk(ppk_ind);
+plot(datetime_ppk_g,q1_clean_height_datum_ppk,'-r')
+title(" Despiked Q1 datum Height")
 
 %xaxis([6000 8000]);yaxis([-27.5 -25.5])
 subplot(313)
@@ -93,4 +93,4 @@ xzoom
 fs2=char(datetime(survey_day,'Format','yyyyMMdd'));
 odir=['matfiles_'  fs2 '/'];
 mkdir(odir)
-save([odir 's5_PPK_GNSS_DATA_' fs2],'lon_ppk','lat_ppk','clean_height_navd88_ppk','q1_clean_height_navd88_ppk','datetime_ppk_g','Qf','height_navd88_ppk')
+save([odir 's5_PPK_GNSS_DATA_' fs2],'lon_ppk','lat_ppk','clean_height_datum_ppk','q1_clean_height_datum_ppk','datetime_ppk_g','Qf','height_datum_ppk')

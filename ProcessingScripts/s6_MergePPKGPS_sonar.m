@@ -22,7 +22,7 @@ hold on
 %plot(GPS.mat_time(50:end-30),GPS.altWGS84(50:end-30),'.g')
 hold on
 
-plot(PPKGPS.datetime_ppk_g-gps_total_offset,PPKGPS.clean_height_navd88_ppk-sync_vert_offset,'.-r')
+plot(PPKGPS.datetime_ppk_g-gps_total_offset,PPKGPS.clean_height_datum_ppk-sync_vert_offset,'.-r')
 
 %xaxis(xl)
 clean_sonar_range_i=interp1(S1.sonar_dtime_utc_gps_g,S1.clean_sonar_range,PPKGPS.datetime_ppk_g-gps_total_offset);
@@ -40,7 +40,7 @@ hold on
 %plot(GPS.mat_time(50:end-30),GPS.altWGS84(50:end-30),'.g')
 hold on
 
-plot(PPKGPS.datetime_ppk_g-gps_total_offset,PPKGPS.clean_height_navd88_ppk-sync_vert_offset,'.-r')
+plot(PPKGPS.datetime_ppk_g-gps_total_offset,PPKGPS.clean_height_datum_ppk-sync_vert_offset,'.-r')
 
 %xaxis(xl)
 clean_sonar_range_i=interp1(S1.sonar_dtime_utc_gps_g,S1.clean_sonar_range,PPKGPS.datetime_ppk_g-gps_total_offset);
@@ -53,17 +53,18 @@ figure(21);clf
 ws1=near(PPKGPS.datetime_ppk_g,xl(1));
 ws2=near(PPKGPS.datetime_ppk_g,xl(2));
 
-chc=(PPKGPS.clean_height_navd88_ppk(ws1:ws2))-smooth(PPKGPS.clean_height_navd88_ppk(ws1:ws2),500);
+chc=(PPKGPS.clean_height_datum_ppk(ws1:ws2))-smooth(PPKGPS.clean_height_datum_ppk(ws1:ws2),500);
 
 subplot(411)
 shc=clean_sonar_range_i(ws1:ws2)-smooth(clean_sonar_range_i(ws1:ws2),200);
 plot(shc,'r')
 hold on
 plot(chc,'b')
-
+ title("heave and echosounder data before resync")
 subplot(412)
 [r,lags]=xcorr(fillmissing(shc,'linear'),chc,50,'unbiased');
 plot(lags,r)
+ title("Correlation function ouput)")
 
 [mx,mi]=max(r);
 %s_ssr=interp1(1:length(ssr),ssr,[1:length(ssr) ]+ml);
@@ -81,8 +82,12 @@ subplot(413)
 plot(chc+4,'b')
 hold on
 plot(shifted_sonar_range_i(ws1:ws2),'r');
+ title("heave and shifted echosounder data after resync")
+
 subplot(414)
 plot(chc-shifted_sonar_range_i(ws1:ws2)')
+ title("heave - shifted echosounder residual after resync")
+
 %%
 
 figure(22) ;clf
@@ -99,15 +104,15 @@ gpsantenna_offset_waterline=.15;
 sonar_waterline_offset=.10;%sonar to waterline
 x=PPKGPS.lon_ppk;
 y=PPKGPS.lat_ppk;
-z=-shifted_sonar_range_i(:)+PPKGPS.clean_height_navd88_ppk-(sonar_waterline_offset+gpsantenna_offset_waterline);
+z=-shifted_sonar_range_i(:)+PPKGPS.clean_height_datum_ppk-(sonar_waterline_offset+gpsantenna_offset_waterline);
 %
 
 longitude=x;latitude=y;
 z_water_surf=-(shifted_sonar_range_i(:) +sonar_waterline_offset);
-z_gps_navd88=PPKGPS.clean_height_navd88_ppk(:);
-z_seafloor_navd88=z_water_surf  + z_gps_navd88 - sonar_waterline_offset;
+z_gps_datum=PPKGPS.clean_height_datum_ppk(:);
+z_seafloor_datum=z_water_surf  + z_gps_datum - sonar_waterline_offset;
 
-To=table(longitude,latitude,z_seafloor_navd88,z_water_surf,z_gps_navd88);
+To=table(longitude,latitude,z_seafloor_datum,z_water_surf,z_gps_datum);
 writetable(To,[odir 'PPK_Heave_Corrected_Trackline_Data' fs2 '.txt'])
 
 
@@ -135,7 +140,7 @@ if make_maps_ppk
     %     scatter(x(fit_inds),y(fit_inds),12,z(fit_inds),'or');
     %     pause(.1)
     % end
-    k=boundary(x,y,.4);%x and y are track line coordinate vectors in UTM, z is the surface re navd88
+    k=boundary(x,y,.4);%x and y are track line coordinate vectors in UTM, z is the surface re datum
     plot(x(k),y(k),'k','linewidth',3)
 title('PPK GNSS Heave Corrected Trackline Data with boundary for fitting')
     %%
@@ -185,7 +190,7 @@ title('PPK GNSS Heave Corrected Trackline Data with boundary for fitting')
     %cc=flipud(cc);
     colormap(cm);
     hc=colorbar;
-    hc.Label.String='Z re Navd88 (m)';
+    hc.Label.String='Z re datum (m)';
     xlabel('Lon (Deg)');
     ylabel('Lat (Deg)');
     %print -dpng Dem&Track_5_5_23

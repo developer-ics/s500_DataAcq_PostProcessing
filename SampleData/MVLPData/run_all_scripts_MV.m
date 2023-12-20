@@ -80,8 +80,8 @@ dirnm=[data_dir '\Reachr0_' fs2 '*']
 %the below can be used to convert ellopsiodal height data to othrometric
 %height with some small error due to spatial variablity if geoid
 %Emlid data from Emlid studio is usually output in ellopsiodal height
-ell2navd88 = 29.028 % from https://vdatum.noaa.gov/vdatumweb/
-ell2navd88 = 0 % the MArtha's Vineyard example data was processed in orthemetric height
+ell2ortho = 29.028 % from https://vdatum.noaa.gov/vdatumweb/
+ell2ortho = 0 % the Martha's Vineyard example data was processed in orthemetric height
 
 s5_read_emlid_LLH_PPK
 % makes figures(14) to (15)

@@ -15,7 +15,7 @@ mkdir(godir)
 % these should be in dirstr = .\Data\nmeadata\MM-dd-yyyy\
 % where data_dir =pwd is the location of this script
 dirstr=[data_dir '\Data\nmeadata\' fs]
-%s1_readNMEAfiles
+ s1_readNMEAfiles
 % no figures
 
 %% reads s500 sonar data written to rasbpi logger

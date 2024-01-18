@@ -1,5 +1,6 @@
 
-
+v = ver
+navtoolbox =any(strcmp(cellstr(char(v.Name)), 'Navigation Toolbox'))
 
 
 dd=dir([dirstr '\*.dat'])
@@ -27,8 +28,9 @@ for fi=2:length(dd) %5  20201218-101925265.bin ios new 500 khz
             nmcode=ln(31:35);
             nmdata=ln(30:end);
 
-            if 1
+            if ~navtoolbox
                 if strmatch(nmcode,'GNGGA')
+
                     ji2=ji2+1;
                     Str=ln(30:end);
                     str1 = regexprep(Str,'[,;=]', ' ');
@@ -37,33 +39,54 @@ for fi=2:length(dd) %5  20201218-101925265.bin ios new 500 khz
                     str4=regexprep(str3,'E','');
                     numArray = str2num(str4);
                     if length(numArray)>=3
-                        gps__utc_time1(ji2)=numArray(1);
-                        lat1(ji2)=floor(numArray(2)/100)+(numArray(2)-floor(numArray(2)/100)*100)./60;
-                        lon1(ji2)=floor(numArray(3)/100)+(numArray(3)-floor(numArray(3)/100)*100)./60;
-                        pc_time_gga1(ji2)=dt(ii);
-                           gps_utc_time1(ji2).Year=year(dt(ii));
-                gps_utc_time1(ji2).Month=month(dt(ii));
-                gps_utc_time1(ji2).Day=day(dt(ii));
+                        gps_utc_time1a(ji2)=numArray(1);
+                        gps_utc_time(ji2)=datetime(0,0,0,0,0,0,'TimeZone','UTC');
+                        gps_utc_time(ji2).Hour=  floor(gps_utc_time1a(ji2)./1e4);
+                        gps_utc_time(ji2).Minute= floor(rem(gps_utc_time1a(ji2),10000)./1e2);
+                        gps_utc_time(ji2).Second= rem(gps_utc_time1a(ji2),100);
+                        if ~isempty(strfind(str1,"W"))
+                            lons=-1;
+                        elseif  ~isempty(strfind(str1,"E"))
+                            lons=1;
+                        end
+                        if ~isempty(strfind(str1,"N"))
+                            lats=1;
+                        elseif  ~isempty(strfind(str1,"S"))
+                            lats=-1;
+                        end
+                        lat(ji2)=lats.*(floor(numArray(2)/100)+(numArray(2)-floor(numArray(2)/100)*100)./60);
+                        lon(ji2)=lons.*(floor(numArray(3)/100)+(numArray(3)-floor(numArray(3)/100)*100)./60);
+                        altMSL(ji2)=numArray(7);
+                        GeoidSeparation(ji2)=numArray(8);
+                        altWGS84(ji2)=   altMSL(ji2)+  GeoidSeparation(ji2);
+
+                        pc_time_gga(ji2)=dt(ii);
+                        gps_utc_time(ji2).Year=year(dt(ii));
+                        gps_utc_time(ji2).Month=month(dt(ii));
+                        gps_utc_time(ji2).Day=day(dt(ii));
+
 
                     end
                 end
-            end
-            ggaData=pnmea(     nmdata);
 
-            if ggaData.Status==0
-                ji=ji+1;
-                gps_utc_time(ji)=datetime(ggaData.UTCTime,'TimeZone','UTC');% this is UTC
+            elseif navtoolbox
+                ggaData=pnmea(nmdata);
+       
+                if ggaData.Status==0
+                    ji=ji+1;
+                    gps_utc_time(ji)=datetime(ggaData.UTCTime,'TimeZone','UTC');% this is UTC
 
-                lat(ji)=ggaData.Latitude;
-                lon(ji)=ggaData.Longitude;
-                altWGS84(ji)=ggaData.Altitude-ggaData.GeoidSeparation;
-                altMSL(ji)=ggaData.Altitude;
-                GeoidSeparation(ji)=ggaData.GeoidSeparation;
-                pc_time_gga(ji)=dt(ii);% this is pc(rasbpi) time when gga sentences are recived
-                gps_utc_time(ji).Year=year(dt(ii));
-                gps_utc_time(ji).Month=month(dt(ii));
-                gps_utc_time(ji).Day=day(dt(ii));
+                    lat(ji)=ggaData.Latitude;
+                    lon(ji)=ggaData.Longitude;
+                    altWGS84(ji)=ggaData.Altitude-ggaData.GeoidSeparation;
+                    altMSL(ji)=ggaData.Altitude;
+                    GeoidSeparation(ji)=ggaData.GeoidSeparation;
+                    pc_time_gga(ji)=dt(ii);% this is pc(rasbpi) time when gga sentences are recived
+                    gps_utc_time(ji).Year=year(dt(ii));
+                    gps_utc_time(ji).Month=month(dt(ii));
+                    gps_utc_time(ji).Day=day(dt(ii));
 
+                end
             end
         end
     end

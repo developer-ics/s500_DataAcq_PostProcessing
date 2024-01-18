@@ -222,7 +222,7 @@ title('PPK GNSS Heave Corrected Trackline Data with boundary for fitting')
     %cc=flipud(cc);
     colormap(cm);
     hc=colorbar;
-    hc.Label.String='Depth (m)';
+    hc.Label.String='Z re datum (m)';
     xlabel('Lon (Deg)');
     ylabel('Lat (Deg)');
     print('-dpng',[godir 's6_PPK_Contours_'  fs2]);

@@ -1,5 +1,4 @@
 %%
-YF_timezone='America/New_York'
 
 outname=[odir 's1_NMEA_GNSS_DATA_' fs2]
 GPS=load(outname);
@@ -29,7 +28,7 @@ sonar_time_rp_utc=datetime(datetime(sonar_time_rp,'TimeZone',YF_timezone),'TimeZ
 hb=plot(sonar_time_rp_utc,sonar_range)
 hold on
 hr =plot(sonar_time_rp_utc,movstd(sonar_range,50),'r')
-yaxis([prctile(sonar_range,1)-.1  prctile(sonar_range,99)+.5])
+yaxis([0  prctile(sonar_range,99)+.5])
 title('Sonar depth')
 
 %% pick out start and end times
@@ -119,7 +118,7 @@ plot(datetime(GPS.pc_time_gga(gps_ind),'TimeZone',YF_timezone),ydata,'.')
 sonar_mtime_utc_gps=polyval(pp,datenum(sonar_time_rp),[],mu);
 sonar_dtime_utc_gps=datetime(sonar_mtime_utc_gps,'convertFrom','datenum','TimeZone','UTC');
 title('Difference NMEA Gps time -  Rasbpi time')
-yaxis([min(ydata) max(ydata)])
+yaxis([min(ydata) max(ydata)+.05])
 
 
 

@@ -19,7 +19,7 @@ dirstr=[data_dir '\Data\nmeadata\' fs]
 % no figures
 
 %% reads s500 sonar data written to rasbpi logger
-keep('survey_day','fs','fs2','odir','godir','data_dir')
+keep3('survey_day','fs','fs2','odir','godir','data_dir')
 % these should be in dirstr =  [data_dir '\Data\s500\MM-dd-yyyy\']
 % where data_dir =pwdis the location of this script
 dirstr=[data_dir '\Data\s500\' fs]
@@ -36,7 +36,7 @@ use_txt_depth_strings=1
 
 %% Set Start and End time for processing and assings NMEA GGA sentence based time stamps to sonar data 
 % this should eliminate any issues with data logger time set incorrectly
-keep('survey_day','fs','fs2','odir','godir','data_dir')
+keep3('survey_day','fs','fs2','odir','godir','data_dir')
 % GPS based start is when gps drops below GPS_thresh m MSL, end is when goes above GPS_thresh m MSL
 GPS_thresh=2
 
@@ -66,7 +66,7 @@ s4_MergeNMEA_GPS_s500
 % makes figures(8) to (13)
 
 %% Load PPK GNSS data
-keep('survey_day','fs','fs2','odir','godir','data_dir')
+keep3('survey_day','fs','fs2','odir','godir','data_dir')
 % LLH data from emlid studio should be in:
 % and PPK *.pos data in :
 %
@@ -101,7 +101,7 @@ s5_read_emlid_LLH_PPK
 % accepatble as the code will use non-zero values. 
 % Large values over 10 might  indicate a timing problem
 
-keep('survey_day','fs','fs2','odir','godir','data_dir')
+keep3('survey_day','fs','fs2','odir','godir','data_dir')
 use_resync=1;
 gps_leap_offset=seconds(18)
 processing_delay=seconds(0)

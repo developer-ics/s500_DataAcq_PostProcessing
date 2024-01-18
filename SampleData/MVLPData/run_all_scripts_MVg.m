@@ -3,7 +3,7 @@ survey_day=datetime(2023,5,5)
 fs=char(datetime(survey_day,'Format','MM-dd-yyyy'))
 fs2=char(datetime(survey_day,'Format','yyyyMMdd'))
 
-addpath('F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Yellowfin\ExampleDataPro\ProcessingScripts')
+addpath('F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\ProcessingScripts')
 data_dir=pwd
 
 odir=[data_dir '\matfiles_'  fs2 '\'];% location of matfiles that are stored in processing
@@ -51,7 +51,7 @@ YF_timezone='America/New_York' % set the time zone of the rasbpi data logger
 processing_time=seconds(.7);
 %processing_time=seconds(2);
 
-s3_Set_start_end_time_sync
+%s3_Set_start_end_time_sync
 % makes figures(6) and 7
 %%  Merge NMEA GPS DATA and Sonar Data. Sonar Data is cleaned here  
 % look at lines 29 thru 81 for 3 stages of time series cleaning
@@ -106,9 +106,10 @@ use_resync=1;
 gps_leap_offset=seconds(18)
 processing_delay=seconds(0)
 sync_vert_offset=0 % to make figure(20) linered and blue line overlap vertically
-xl(1)=datetime(2023,4,26,15,0,0,'TimeZone','UTC');% pick a period with sonar variations due to heave not bed changes
-xl(2)=datetime(2023,4,26,15,8,0,'TimeZone','UTC');
-
+%xl(1)=datetime(2023,4,26,15,0,0,'TimeZone','UTC');% pick a period with sonar variations due to heave not bed changes
+%xl(2)=datetime(2023,4,26,15,8,0,'TimeZone','UTC');
+xl(1)=datetime(2023,5,5,17,7,0,'TimeZone','UTC');% pick a period with sonar variations due to heave not bed changes
+xl(2)=datetime(2023,5,5,17,11,0,'TimeZone','UTC');
 make_maps_ppk=1;
 s6_MergePPKGPS_sonar
 % makes figures (16) to (24)

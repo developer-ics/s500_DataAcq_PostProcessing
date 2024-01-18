@@ -34,10 +34,10 @@ figure(8);clf
 
 subplot(411)
 hb=plot(sonar_range(sonar_ind),'o-b')
-dsonar_range=sonar_range;
-dsonar_range(ping_conf<50)=NaN;
-dsonar_range(ping_conf==0)=sonar_range(ping_conf==0);;
-sonar_range=dsonar_range;
+%dsonar_range=sonar_range;
+%dsonar_range(ping_conf==0)=sonar_range(ping_conf==0);;
+%dsonar_range(ping_conf<50)=NaN;
+%sonar_range=dsonar_range;
 hold on
 plot(ping_conf(sonar_ind)./100,'.g')
 hb=plot(sonar_range(sonar_ind),'.-r')
@@ -69,7 +69,7 @@ hr1= plot(smooth(filloutliers(sonar_range(sonar_ind),'linear',"movmedian",70,'th
 title('2nd stage of sonar data cleaning using filloutliers')
 legend([hb1 hr1],'raw bottom dection','After 2nd stage cleaning')
 
-sdsonar_range= dsonar_range-smooth(filloutliers(sonar_range(sonar_ind),'linear',"movmedian",50,'threshold',1.0),20);
+sdsonar_range= dsonar_range-smoothdata(filloutliers(sonar_range(sonar_ind),'linear',"movmedian",50,'threshold',1.0),20);
 
 subplot(414)
 plot( sdsonar_range,'.')
@@ -139,7 +139,7 @@ if make_maps
     disp('starting reg')
     x=loni(:);
     y=lati(:);
-    z=-smooth(clean_sonar_range,20);
+    z=-smoothdata(clean_sonar_range,20);
     ni=isnan(x);
     x(ni)=[];
     y(ni)=[];

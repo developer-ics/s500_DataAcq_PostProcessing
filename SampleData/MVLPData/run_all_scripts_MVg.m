@@ -15,7 +15,7 @@ mkdir(godir)
 % these should be in dirstr = .\Data\nmeadata\MM-dd-yyyy\
 % where data_dir =pwd is the location of this script
 dirstr=[data_dir '\Data\nmeadata\' fs]
- s1_readNMEAfiles
+% s1_readNMEAfiles
 % no figures
 
 %% reads s500 sonar data written to rasbpi logger
@@ -57,12 +57,12 @@ processing_time=seconds(.7);
 % look at lines 29 thru 81 for 3 stages of time series cleaning
 %  look at lines 156 177 for rejection of outlier from a spatiall smoothed
 %  solution
-keep('survey_day','fs','fs2','odir','godir','data_dir')
+keep3('survey_day','fs','fs2','odir','godir','data_dir')
 make_maps=1; %This needs to be 1 for the next step to work
 
 spatial_filter_rejection=1;
 
-s4_MergeNMEA_GPS_s500
+%s4_MergeNMEA_GPS_s500
 % makes figures(8) to (13)
 
 %% Load PPK GNSS data
@@ -111,5 +111,5 @@ sync_vert_offset=0 % to make figure(20) linered and blue line overlap vertically
 xl(1)=datetime(2023,5,5,17,7,0,'TimeZone','UTC');% pick a period with sonar variations due to heave not bed changes
 xl(2)=datetime(2023,5,5,17,11,0,'TimeZone','UTC');
 make_maps_ppk=1;
-s6_MergePPKGPS_sonar
+%s6_MergePPKGPS_sonar
 % makes figures (16) to (24)

@@ -57,13 +57,15 @@ legend([hk hg],'LLH GNSS data before PPK processing','PPK data')
 %%  saves ppk  and q1 only  nav88height data
 figure(15);clf
 %height_ell_ppk=func_despike_phasespace(T2.height_m_);
-height_datum_ppk=T2.height_m_+ ell2ortho
+height_datum_ppk=T2.height_m_+ ell2ortho;
 % filter length is 151 / 5=30 s. thresh level of 12 seems to work 
-%clean_height_datum_ppk=clean0(T2.height_m_,251,12) + ell2ortho ;
-clean_height_datum_ppk=hampel(T2.height_m_,251,6) + ell2ortho ;
+clean_height_datum_ppk=clean0(T2.height_m_,251,12) + ell2ortho ;
+%clean_height_datum_ppk=hampel(T2.height_m_,251,6) + ell2ortho ;
 
 q1_clean_height_datum_ppk=clean_height_datum_ppk;
-inds=imdilate(T2.Q~=1,ones(7 ,1));% imdilate as points on either side of q 1 transition are often bad
+%inds=imdilate(T2.Q~=1,ones(7 ,1));% imdilate as points on either side of q 1 transition are often bad
+inds=logical(conv((T2.Q~=1)',ones(7 ,1)','same'));% imdilate (with conv) as points on either side of q 1 transition are often bad
+
 q1_clean_height_datum_ppk(inds)=NaN;
 subplot(311)
 plot(datetime_ppk,T2.height_m_+ ell2ortho,'.-b')

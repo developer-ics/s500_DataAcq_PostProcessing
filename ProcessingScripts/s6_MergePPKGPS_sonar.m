@@ -53,10 +53,10 @@ figure(21);clf
 ws1=near(PPKGPS.datetime_ppk_g,xl(1));
 ws2=near(PPKGPS.datetime_ppk_g,xl(2));
 
-chc=(PPKGPS.clean_height_datum_ppk(ws1:ws2))-smooth(PPKGPS.clean_height_datum_ppk(ws1:ws2),500);
+chc=(PPKGPS.clean_height_datum_ppk(ws1:ws2))-smoothdata(PPKGPS.clean_height_datum_ppk(ws1:ws2),500);
 
 subplot(411)
-shc=clean_sonar_range_i(ws1:ws2)-smooth(clean_sonar_range_i(ws1:ws2),200);
+shc=clean_sonar_range_i(ws1:ws2)-smoothdata(clean_sonar_range_i(ws1:ws2),200);
 plot(shc,'r')
 hold on
 plot(chc,'b')

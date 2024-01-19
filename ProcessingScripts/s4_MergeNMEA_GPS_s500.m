@@ -53,8 +53,11 @@ yaxis([prctile(sonar_range(sonar_ind),1)-.1  prctile(sonar_range(sonar_ind),99)+
 hold on
 %dsonar_range=despike1(sonar_range(sonar_ind),3)
 %dsonar_range=hampel(sonar_range(sonar_ind),100,3);
+if despike_on
 dsonar_range=filloutliers(sonar_range(sonar_ind),'linear',"movmedian",100,'threshold',[3]);
-
+else
+    dsonar_range=sonar_range(sonar_ind);
+end
 %dsonar_range=spikeRemoval(sonar_range(sonar_ind),'nbins',12, 'wnsz',300, 'nstd',0,'debug','','npass',1,'ndata',5);
 %dsonar_range=spikeRemoval(dsonar_range,'nbins',12, 'wnsz',300, 'nstd',1,'debug','','npass',3);
 
@@ -63,17 +66,22 @@ hr=plot(dsonar_range,'.r')
 title('1st stage of sonar data cleaning using filloutliers')
 legend([hb hr],'raw bottom dection','After 1st stage cleaning')
 subplot(413)
-hb1=plot(dsonar_range,'.b')
+%hb1=plot(dsonar_range,'.b')
 hold on
-hr1= plot(smooth(filloutliers(sonar_range(sonar_ind),'linear',"movmedian",70,'threshold',1.0),20),'.-r');
+%hr1= plot(smoothdata(filloutliers(sonar_range(sonar_ind),'linear',"movmedian",70,'threshold',1.0),20),'.-r');
 title('2nd stage of sonar data cleaning using filloutliers')
-legend([hb1 hr1],'raw bottom dection','After 2nd stage cleaning')
+%legend([hb1 hr1],'raw bottom dection','After 2nd stage cleaning')
+if despike_on
+    rej_thr=.75
+else
+        rej_thr=5
 
+end
 sdsonar_range= dsonar_range-smoothdata(filloutliers(sonar_range(sonar_ind),'linear',"movmedian",50,'threshold',1.0),20);
 
 subplot(414)
 plot( sdsonar_range,'.')
-ninds=abs(sdsonar_range)>.75;
+ninds=abs(sdsonar_range)> rej_thr;
 hold on
 sdsonar_range(ninds)=NaN;
 plot(sdsonar_range,'.r')

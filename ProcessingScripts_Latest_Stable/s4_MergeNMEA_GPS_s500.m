@@ -127,7 +127,7 @@ cc=turbo;cc=flipud(cc);
 colormap(cc);
 hc=colorbar;
 hold on
-caxis([-1 8]);
+    caxis([percentile(zc,1) percentile(zc,99)]);
 hc.Label.String='Depth (M)';
 
 mkdir(godir)
@@ -215,7 +215,7 @@ end
     scatter3(loni,lati,zc,12,zc,'filled');
     view(2);
     colorbar;
-    caxis([-8 1]);
+    caxis([percentile(zc,1) percentile(zc,99)]);
     clean_sonar_range=-zc;;
 title({'Final  Scatter plot of merged NMEA GNSS data',' and Sonar Depths after 4 stages of cleaning','Holes tend to be regions of consistent wave breaking'} )
     %% Contour plot
@@ -225,7 +225,7 @@ title({'Final  Scatter plot of merged NMEA GNSS data',' and Sonar Depths after 4
    cm2=flipud(pink(40));
   cm=[cm1(1:58,:);(cm2(6:40,:))];
     tanakacontour(DEM,[-15:.5:4]);
-    caxis([-15 4]);
+    caxis([percentile(zc,1) percentile(zc,99)]);
     title(['YellowFin survey ' fs ]);
     hold on;
     %plot(x,y,'.k');

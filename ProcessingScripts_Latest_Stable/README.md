@@ -4,7 +4,7 @@ Processing as described in this section has been designed to allow maximum flexi
 
 The post-processing of Yellowfin S500 sonar and GNSS data is a multistep process. Matlab scripts are available at the ICS github at the following link:
 
-<https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/ProcessingScripts_Latest_Stable>
+https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/ProcessingScripts_Latest_Stable
 
 The compiled executables are located in:
 
@@ -26,8 +26,6 @@ During processing a number of sequentially numbered plots are auto-generated in 
 
 Individual scrips are available for each step of the process and a master script (run_all_scripts.m) that calls the scripts for each step is also provided. run_all_scripts.m is well documented to describe each step of the processing. This file should be located in the directory (data_dir) with the downloaded data files for each survey. It is located in the SampleData folders on github at the following link: <https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/SampleData>
 
-Figure 94 – Typical Auto-generated Output Plot
-
 Two sample datasets are available:
 
 MVLPData is from the south coast of Martha’s Vineyard with substantial heave and wave breaking.
@@ -38,11 +36,11 @@ PondTest2 was acquired during flat water testing
 
 <https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/SampleData/PondTest2>
 
-The data files can be downloaded from the Raspberry Pi logger on Yellowfin via WinSCP or similar SCP/SSH software. **Note:** the directory shown in Figure 95 below **must** be maintained on the analysis PC. The data directory should also contain the results of the Emlid Studio PPK processing of the GNSS data.
+The data files can be downloaded from the Raspberry Pi logger on Yellowfin via WinSCP or similar SCP/SSH software. **Note:** the directory stucture shown in Figure 2 below **must** be maintained on the analysis PC. The GNSS data directory (YF3-reach-m_2023\* in this case) should also contain the results of the Emlid Studio PPK processing of the GNSS data.
 
 ![](media/3896d76ec518ddc12c651bd38e4c1c6c.jpg)
 
-Figure 95 – Required Directory Structure - Analysis PC
+Figure 2. – Required Directory Structure - Analysis PC
 
 The master script that calls each step (run_all_scripts.m ) reads an input parameter file - by default InputParam.txt. Alternately the user may specify different Input file names and paths when prompted.
 
@@ -118,11 +116,11 @@ s2_profile_data\_ YYYYMMdd.mat. It contains the following variables:
 -   profile_int_matrix - the matrix of intensity values whose size is defined by the number of timestamps by the number of range bins.
 -   bed_detect_range - the depth value for each ping determined by a threshold detector in the MATLAB script. This detector could be modified to account for presence of bubbles or other scatterers.
 
-An example of the profile output is shown in Figure 96 below. This data is not normally used for any of the subsequent steps, as the detected depth output is usually sufficient.
+An example of the profile output is shown in Figure 3 below. This data is not normally used for any of the subsequent steps, as the detected depth output is usually sufficient. Manual editing of the detected depth guided bythe fullintensity profile is under development (3/2/2024).
 
 ![](media/e99634f1ec35fe88e38fb188cae6ce19.jpg)
 
-Figure 96 – Typical Full Intensity Profile Plot (ID=1308)
+Figure 3– Typical Full Intensity Profile Plot (ID=1308)
 
 ### Setting Start & End Times (Step 3)
 
@@ -132,6 +130,16 @@ A second check is performed based on running a standard filter on the detected b
 
 The shorter of these two time spans is used for subsequent processing steps. If required, additional delay can be specified by the variable sonar_start_time_adjust and sonar_end_time_adjust. This script also writes the GPS time stamps to the sonar data by using the datalogger time stamps that are acquired with the GNSS and sonar data, eliminating the effects of realtime clock synchronization errors on the datalogger.
 
+Exclusion periods can be assigned for periods when data was knoen to be bad. Eg USV was taken out of the water.There can be as many exclusion periods as desired:
+
+exclusion_start_time_1,year/month/day hh:mm:ss, 2024/02/09 16:16:20
+
+exclusion_end_time_1,year/month/day hh:mm:ss, 2024/02/09 16:20:31
+
+exclusion_start_time_2,year/month/day hh:mm:ss, 2024/02/09 16:32:20
+
+exclusion_end_time_2,year/month/day hh:mm:ss, 2024/02/09 16:37:15
+
 ### Combining NMEA & Sonar Data (Step 4)
 
 The script s4_MergeNMEA_GPS_s50 combines the NMEA and sonar data. Two rounds of data filtering using median filters are performed. These can be enabled or disabled by despike_on, enables time series despking based on median filters,1
@@ -140,7 +148,9 @@ This script produces a scatterplot with dots colored by depth as a function of l
 
 A final outlier rejection step can be performed by comparing the trackline data to a spatial smoothed surface output, and rejecting values that are greater than spatial_reject_thr (m) from the surface. This requires lines that are close enough to enable accurate interpolation and requires spatial_filter_rejection =1 and make_maps =1.
 
-The depth is relative to the ASV altitude (i.e. - not a Geodetic datum) and is not corrected for heave. To correct for heave the PPK post-processed GNSS data is required.
+These steps will remove short periods (less than a few seconds) of bad data (outliers). An exclusion period should be set for longer periods of low quality data.
+
+The depth ouptut in this step is relative to the ASV altitude (i.e. - not a Geodetic datum) and is not corrected for heave. To correct for heave the PPK post-processed GNSS data is required.
 
 ### Emlid File Conversion (Step 5)
 

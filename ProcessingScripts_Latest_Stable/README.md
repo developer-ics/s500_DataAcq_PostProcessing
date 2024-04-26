@@ -32,6 +32,14 @@ MVLPData is from the south coast of Martha’s Vineyard with substantial heave a
 
 <https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/SampleData/MVLPData>
 
+A InputParam.txt file for this data set is located in <https://github.com/developer-ics/s500_DataAcq_PostProcessing/blob/main/ProcessingScripts_Latest_Stable/MatlabRuntimeCompiledExes/YellowFin_Processing/for_redistribution_files_only/YellowFin_Processing.exe>
+
+Thus running YellowFin_Processing,exe and answering y at the 1st prompt will process this sample data. The path to the sample data in the InputParam.txt file will need to be edited from
+
+data_dir,string,F:\\GDriveICS\\My Drive\\IntegratedCoastalSolutions\\SoftwareDevelopment\\Yellowfin\\ExampleDataPro\\MVLPData
+
+to a location where the data set has been downloaded.
+
 PondTest2 was acquired during flat water testing
 
 <https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/SampleData/PondTest2>
@@ -42,7 +50,7 @@ The data files can be downloaded from the Raspberry Pi logger on Yellowfin via W
 
 Figure 2. – Required Directory Structure - Analysis PC
 
-The master script that calls each step (run_all_scripts.m ) reads an input parameter file - by default InputParam.txt. Alternately the user may specify different Input file names and paths when prompted.
+The master script that calls each step (run_all_scripts.m ) reads an input parameter file - by default InputParam.txt. Alternately the user may specify different Input file names and paths when prompted or in the InputParam.txt file.
 
 All parameters have the format:
 
@@ -116,7 +124,7 @@ s2_profile_data\_ YYYYMMdd.mat. It contains the following variables:
 -   profile_int_matrix - the matrix of intensity values whose size is defined by the number of timestamps by the number of range bins.
 -   bed_detect_range - the depth value for each ping determined by a threshold detector in the MATLAB script. This detector could be modified to account for presence of bubbles or other scatterers.
 
-An example of the profile output is shown in Figure 3 below. This data is not normally used for any of the subsequent steps, as the detected depth output is usually sufficient. Manual editing of the detected depth guided bythe fullintensity profile is under development (3/2/2024).
+An example of the profile output is shown in Figure 3 below. This data is not normally used for any of the subsequent steps, as the detected depth output is usually sufficient. Manual editing of the detected depth guided by the full intensity profile is under development (3/2/2024).
 
 ![](media/e99634f1ec35fe88e38fb188cae6ce19.jpg)
 

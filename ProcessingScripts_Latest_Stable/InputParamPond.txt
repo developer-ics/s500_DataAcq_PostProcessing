@@ -25,7 +25,9 @@ spatial_filter_rejection,enables rejection of points spatial_reject_thr above or
 spatial_reject_thr,thershold for spatial_filter_rejection (m),.4
 
 enable_S5,enables step 5-  Load PPK GNSS data,1
-ppk_gpsdata_foldername_prefix,string - dont need to include date,YF3-reach-m_
+ppk_gpsdata_pos_path,string with  path relative to data_dir and file name of pos file,\YF3-reach-m_20231209172051\YF3-reach-m_raw_20231209172051.pos
+ppk_gpsdata_LLH_path,string with  path relative data_dir  and file name of  LLH file,\YF3-reach-m_20231209172051\YF3-reach-m_solution_20231209172051.LLH
+
 ell2ortho, used to convert ellopsiodal height data to orthometric - the MV example data was processed in orthometric height so 0 ,29.028
 
 enable_S6,enables step 6-  Merge PPK GNSS data with  Sonar Data,1

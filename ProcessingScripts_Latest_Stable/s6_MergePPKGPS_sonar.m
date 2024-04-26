@@ -1,5 +1,6 @@
 
 PPKGPS=load([odir 's5_PPK_GNSS_DATA_' fs2]);
+%PPKGPS=load([odir 's5_Qintertia_PPK_GNSS_DATA_' fs2]);
 S1=load([odir 's4_Cleaned_synced_s500_data_' fs2]);
 load([odir 's3_START_END_TIMES_' fs2]);
 
@@ -112,7 +113,7 @@ z_water_surf=-(shifted_sonar_range_i(:) +sonar_waterline_offset);
 z_gps_datum=PPKGPS.clean_height_datum_ppk(:);
 z_seafloor_datum=z_water_surf  + z_gps_datum - sonar_waterline_offset;
 
-To=table(longitude,latitude,z_seafloor_datum,z_water_surf,z_gps_datum);
+To=table(longitude(:),latitude(:),z_seafloor_datum(:),z_water_surf(:),z_gps_datum(:));
 writetable(To,[odir 'PPK_Heave_Corrected_Trackline_Data' fs2 '.txt'])
 
 
@@ -142,7 +143,7 @@ if make_maps_ppk
     %     scatter(x(fit_inds),y(fit_inds),12,z(fit_inds),'or');
     %     pause(.1)
     % end
-    k=boundary(x,y,.4);%x and y are track line coordinate vectors in UTM, z is the surface re datum
+    k=boundary(x(:),y(:),.4);%x and y are track line coordinate vectors in UTM, z is the surface re datum
     plot(x(k),y(k),'k','linewidth',3)
 title('PPK GNSS Heave Corrected Trackline Data with boundary for fitting')
     %%
@@ -152,6 +153,7 @@ title('PPK GNSS Heave Corrected Trackline Data with boundary for fitting')
 
 
     sff= 6e-04;
+     %  sff=3e-04;
     [Zg3,Xg3,Yg3]=RegularizeData3D(x ,y,z,xnodes,ynodes,'smoothness',sff);
     [m,n]=size(Zg3);
     BW=roipoly(Xg3(1,:),Yg3(:,1),Zg3,x(k),y(k));

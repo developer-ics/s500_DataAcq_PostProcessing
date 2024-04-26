@@ -1,0 +1,173 @@
+Accept default .\InputParam.txt or enter input paramter file path\name (y or path\name):
+inpar_ent =
+
+    'y'
+
+
+inpar =
+
+    'F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\ProcessingScripts_Latest_Stable\MatlabRuntimeCompiledExes\YellowFin_Processing\for_testing\InputParam.txt'
+
+trying to get input from: F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\ProcessingScripts_Latest_Stable\MatlabRuntimeCompiledExes\YellowFin_Processing\for_testing\InputParam.txt
+Warning: Column headers from the file were modified to make them valid MATLAB identifiers before creating variable names for the table. The original column headers are saved in the VariableDescriptions property.
+Set 'VariableNamingRule' to 'preserve' to use the original column headers as table variable names.
+Parameter file:
+                                                                                               notes_units                                                                                                                   value                                                   
+                                  _____________________________________________________________________________________________________________________________________    __________________________________________________________________________________________________________
+
+    survey_day                    {'(year/month/day)'                                                                                                                 }    {'2023/05/05'                                                                                            }
+    data_dir                      {'string'                                                                                                                           }    {'F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Yellowfin\ExampleDataPro\MVLPData'}
+    enable_S1                     {'enables step 1- read NMEA GPS data'                                                                                               }    {'0'                                                                                                     }
+    enable_S2                     {'enables step 2-  reads s500 sonar data'                                                                                           }    {'0'                                                                                                     }
+    echo_profile                  {'boolean - enables procesing of echo intensity'                                                                                    }    {'1'                                                                                                     }
+    system_default_sound_speed    {'m/s (set in sonar usually don't change)'                                                                                          }    {'1500'                                                                                                  }
+    measured_sound_speed          {'m/s'                                                                                                                              }    {'1470'                                                                                                  }
+    use_txt_depth_string          {'1 for older s500 firmware - 0 otherwise'                                                                                          }    {'0'                                                                                                     }
+    enable_S3                     {'enables step 3-  Set Start and End time for processing and assign NMEA GGA sentence based time stamps to sonar data'              }    {'1'                                                                                                     }
+    GPS_thresh                    {'elevation threshold for determining start and end time (m)'                                                                       }    {'2'                                                                                                     }
+    SONAR_thresh                  {'Sonar bed detection  std threshold for determining start and end time (m)'                                                        }    {'2'                                                                                                     }
+    sonar_start_time_adjust       {'delay the start time of data procssing (minutes)'                                                                                 }    {'0'                                                                                                     }
+    sonar_end_time_adjust         {'advance the start time of data procssing (minutes)'                                                                               }    {'0'                                                                                                     }
+    processing_time               {'raspberry pi processing delay-usually don't change'                                                                               }    {'0.7'                                                                                                   }
+    YF_timezone                   {'raspberry pi time zone on Yellow Fin - usually UTC'                                                                               }    {'America/New_York'                                                                                      }
+    enable_S4                     {'enables step 4-  Merge NMEA GPS DATA and Sonar Data - Sonar Data is cleaned here'                                                 }    {'1'                                                                                                     }
+    despike_on                    {'enables time series despking based on median filters'                                                                             }    {'1'                                                                                                     }
+    make_maps                     {'enables mapping output during step 4'                                                                                             }    {'1'                                                                                                     }
+    spatial_filter_rejection      {'enables rejection of points spatial_reject_thr above or below away from smoothed spatial surface'                                 }    {'1'                                                                                                     }
+    spatial_reject_thr            {'thershold for spatial_filter_rejection (m)'                                                                                       }    {'.4'                                                                                                    }
+    enable_S5                     {'enables step 5-  Load PPK GNSS data'                                                                                              }    {'1'                                                                                                     }
+    ppk_gpsdata_pos_path          {'string with  path relative to data_dir and file name of pos file'                                                                 }    {'\Reachr0_20230505160754\Reachr0_raw_20230505160754.pos'                                                }
+    ppk_gpsdata_LLH_path          {'string with  path relative data_dir  and file name of  LLH file'                                                                  }    {'\Reachr0_20230505160754\Reachr0_solution_20230505160754.LLH'                                           }
+    ell2ortho                     {'used to convert ellopsiodal height data to orthometric - the MV example data was processed in orthometric height so 0 '           }    {'0'                                                                                                     }
+    enable_S6                     {'enables step 6-  Merge PPK GNSS data with  Sonar Data'                                                                            }    {'1'                                                                                                     }
+    use_resync                    {'set to 1 to engage clock re-syncing based on gps-sonar heave data correletation'                                                  }    {'0'                                                                                                     }
+    gps_leap_offset               {'should be 18 (seconds)'                                                                                                           }    {'18  '                                                                                                  }
+    sync_vert_offset              {'to make figure(20)  red (gps) and blue (sonar) line overlap vertically for visual inspection of corelation with use_resync =1 (m)'}    {'-4 '                                                                                                   }
+    start_sync_time               {'start of resyncing period - should be flat bed with waves '                                                                       }    {'2023/05/05 17:07:00'                                                                                   }
+    end_sync_time                 {'year/month/day hh:mm:ss'                                                                                                          }    {'2023/05/05 17:11:00'                                                                                   }
+    make_maps_ppk                 {'enables mapping output with ppk heave compensation during step 6'                                                                 }    {'1'                                                                                                     }
+
+
+survey_day = 
+
+  datetime
+
+   05-May-2023
+
+
+data_dir =
+
+    'F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Yellowfin\ExampleDataPro\MVLPData'
+
+Warning: Directory already exists.
+> In run_all_scripts (line 30)
+Warning: Directory already exists.
+> In run_all_scripts (line 31)
+
+dirstr1 =
+
+    'F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Yellowfin\ExampleDataPro\MVLPData\Data\nmeadata\05-05-2023'
+
+Skipped Step 1
+
+dirstr2 =
+
+    'F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Yellowfin\ExampleDataPro\MVLPData\Data\s500\05-05-2023'
+
+Skipped Step 2
+
+num_exclusions =
+
+     0
+
+
+start_exclusion_ind =
+
+  1x0 empty double row vector
+
+
+end_exclusion_ind =
+
+  1x0 empty double row vector
+
+
+YF_timezone =
+
+    'America/New_York'
+
+Running Step 3
+
+outname =
+
+    'F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Yellowfin\ExampleDataPro\MVLPData\matfiles_20230505\s1_NMEA_GNSS_DATA_20230505'
+
+Running Step 4
+
+outname =
+
+    'F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Yellowfin\ExampleDataPro\MVLPData\matfiles_20230505\s1_NMEA_GNSS_DATA_20230505'
+
+Warning: Directory already exists.
+> In s4_MergeNMEA_GPS_s500 (line 130)
+In run_all_scripts (line 133)
+
+fn =
+
+    's4_NMEA_GPS_DEM_20230505.tif'
+
+Warning: The GEOTIFFWRITE function will not accept referencing vectors or referencing matrices as input in a future release. Use a geographic raster reference object or a map raster reference object as input instead.
+> In geotiffwrite>validateR (line 652)
+In geotiffwrite>validateInputs (line 131)
+In geotiffwrite (line 14)
+In GRIDobj/GRIDobj2geotiff (line 52)
+In s4_MergeNMEA_GPS_s500 (line 247)
+In run_all_scripts (line 133)
+Warning: The GEOTIFFWRITE function will not accept referencing vectors or referencing matrices as input in a future release. Use a geographic raster reference object or a map raster reference object as input instead.
+> In geotiffwrite>validateR (line 652)
+In geotiffwrite>validateInputs (line 131)
+In geotiffwrite (line 14)
+In GRIDobj/GRIDobj2geotiff (line 52)
+In s4_MergeNMEA_GPS_s500 (line 249)
+In run_all_scripts (line 133)
+
+ppk_gpsdata_pos_path =
+
+    '\Reachr0_20230505160754\Reachr0_raw_20230505160754.pos'
+
+
+ppk_gpsdata_LLH_path =
+
+    '\Reachr0_20230505160754\Reachr0_solution_20230505160754.LLH'
+
+Running Step 5
+
+file_name =
+
+    'F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Yellowfin\ExampleDataPro\MVLPData\\Reachr0_20230505160754\Reachr0_solution_20230505160754.LLH'
+
+
+file_name =
+
+    'F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Yellowfin\ExampleDataPro\MVLPData\\Reachr0_20230505160754\Reachr0_raw_20230505160754.pos'
+
+Warning: Column headers from the file were modified to make them valid MATLAB identifiers before creating variable names for the table. The original column headers are saved in the VariableDescriptions property.
+Set 'VariableNamingRule' to 'preserve' to use the original column headers as table variable names.
+Warning: Directory already exists.
+> In s5_read_emlid_LLH_PPK (line 93)
+In run_all_scripts (line 162)
+Running Step 6
+Warning: The GEOTIFFWRITE function will not accept referencing vectors or referencing matrices as input in a future release. Use a geographic raster reference object or a map raster reference object as input instead.
+> In geotiffwrite>validateR (line 652)
+In geotiffwrite>validateInputs (line 131)
+In geotiffwrite (line 14)
+In GRIDobj/GRIDobj2geotiff (line 52)
+In s6_MergePPKGPS_sonar (line 241)
+In run_all_scripts (line 210)
+Warning: The GEOTIFFWRITE function will not accept referencing vectors or referencing matrices as input in a future release. Use a geographic raster reference object or a map raster reference object as input instead.
+> In geotiffwrite>validateR (line 652)
+In geotiffwrite>validateInputs (line 131)
+In geotiffwrite (line 14)
+In GRIDobj/GRIDobj2geotiff (line 52)
+In s6_MergePPKGPS_sonar (line 243)
+In run_all_scripts (line 210)
+Done hit ctrl-c to exit if running complied version

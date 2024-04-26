@@ -1,7 +1,7 @@
 clear;close('all')
 
-%disp('Eneter input paramter path/name, default ./InputParam.txt')
 
+%inpar_ent='y' % hard codes y
 inpar_ent=input(['Accept default .\\InputParam.txt or enter input paramter file path\\name (y or path\\name):'] ,"s")
 if inpar_ent=='y'
     inpar=[pwd '\InputParam.txt']
@@ -10,7 +10,7 @@ else
 end
 disp(['trying to get input from: ' inpar])
 %Ti=readtable("InputParam.txt",'Delimiter',',','ReadRowNames',1,'Format','%s %s %s');
-Ti=readtable(inpar,'Delimiter',',','ReadRowNames',1,'Format','%s %s %s');
+Ti=readtable(inpar,'Delimiter',',','ReadRowNames',1,'Format','%s %s %s','CommentStyle',{'%'});
 
 disp('Parameter file:')
 disp(Ti)
@@ -54,6 +54,9 @@ int_pro=str2num(cell2mat(T2.echo_profile(2)));  % processing of full intensity p
  system_default_sound_speed=str2num(cell2mat(T2.system_default_sound_speed(2)));
 %d=2
 %p = 101.325+1025*9.81*d/1000
+%s=35
+%t=3
+%c_water(t,p,s)
 measured_sound_speed=str2num(cell2mat(T2.measured_sound_speed(2)));
 use_txt_depth_strings=str2num(cell2mat(T2.use_txt_depth_string(2)));
 %
@@ -81,6 +84,20 @@ SONAR_thresh=str2num(cell2mat(T2.SONAR_thresh(2)));
 %  s3_START_END_TIMES_*.mat mat file or this"
  sonar_start_time_adjust=minutes(str2num(cell2mat(T2.sonar_start_time_adjust(2))));% delay the start5
  sonar_end_time_adjust=-minutes(str2num(cell2mat(T2.sonar_end_time_adjust(2))));% advance  the end
+
+ %%
+num_exclusions=sum(contains(T2.Properties.VariableNames,'exclusion_start'))
+start_exclusion_ind=find(contains(T2.Properties.VariableNames,'exclusion_start'))
+end_exclusion_ind=find(contains(T2.Properties.VariableNames,'exclusion_end'))
+
+for ii=1:num_exclusions
+exclusion_start_time(ii)=datetime(T2{2,start_exclusion_ind(ii)},'InputFormat','uuuu/MM/dd HH:mm:ss','TimeZone','UTC');
+exclusion_end_time(ii)=datetime(T2{2,end_exclusion_ind(ii)},'InputFormat','uuuu/MM/dd HH:mm:ss','TimeZone','UTC');
+end
+%%
+
+
+
 % set the time zone of the rasbpi data logger
  YF_timezone=char( T2.YF_timezone(2))
 
@@ -126,9 +143,9 @@ end
 %  and PPK *.pos data in :
 
  %dirnm=[data_dir '\Reachr0_' fs2 '*']
-ppk_gpsdata_foldername=char(T2.ppk_gpsdata_foldername_prefix(2))
+ppk_gpsdata_pos_path=char(T2.ppk_gpsdata_pos_path(2))
+ppk_gpsdata_LLH_path=char(T2.ppk_gpsdata_LLH_path(2))
 
-dirnm=[data_dir '\' [ppk_gpsdata_foldername fs2] '*']
 
 % The PPK data should have 10 header lines with the
 % the 10th having variable names as defined by Emlid Studio

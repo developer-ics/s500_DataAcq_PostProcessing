@@ -5,11 +5,8 @@ load([odir 's3_START_END_TIMES_' fs2 '.mat'])
 
 %% Read LLH File
 
-dd=dir(dirnm);
-di=find([dd.isdir]);
-folder_name=[dd(di).folder '\' dd(di).name]
-dd2=dir([folder_name '\*.LLH']);
-file_name=[folder_name '\' dd2.name]
+
+file_name=[data_dir '\' ppk_gpsdata_LLH_path]
 T=readtable(file_name,'FileType','text');
 T.date=datetime(T.Var1,'Inputformat','yyyy/MM/dd');
 T.datetime=T.date+T.Var2;
@@ -23,13 +20,8 @@ hold on
 %% Read PPK *.pos file
 
 
-dd2=dir([folder_name '\'   '*.pos']);
-for ii=1:length(dd2)
-    fi(ii)=isempty(strfind(dd2(ii).name,'events'));
 
-end
-di=find(fi);
-file_name=[dd2(di).folder '\' dd2(di).name]
+file_name=[data_dir '\' ppk_gpsdata_pos_path]
 
 opts = detectImportOptions(file_name,'FileType','text');
 opts.DataLines=[11 Inf];
@@ -59,14 +51,19 @@ figure(15);clf
 %height_ell_ppk=func_despike_phasespace(T2p.height_m_);
 height_datum_ppk=T2p.height_m_+ ell2ortho;
 % filter length is 151 / 5=30 s. thresh level of 12 seems to work 
-clean_height_datum_ppk=clean0(T2p.height_m_,251,12) + ell2ortho ;
+
+inds=logical(conv((T2p.Q~=1)',ones(13 ,1)','same'));% imdilate (with conv) as points on either side of q 1 transition are often bad
+
+height_datum_ppk(inds)=NaN;
+
+
+clean_height_datum_ppk=clean0(height_datum_ppk,251,6)  ;
 %clean_height_datum_ppk=hampel(T2p.height_m_,251,6) + ell2ortho ;
 
 q1_clean_height_datum_ppk=clean_height_datum_ppk;
-%inds=imdilate(T2p.Q~=1,ones(7 ,1));% imdilate as points on either side of q 1 transition are often bad
-inds=logical(conv((T2p.Q~=1)',ones(7 ,1)','same'));% imdilate (with conv) as points on either side of q 1 transition are often bad
+%inds=logical(conv((T2p.Q~=1)',ones(13 ,1)','same'));% imdilate (with conv) as points on either side of q 1 transition are often bad
 
-q1_clean_height_datum_ppk(inds)=NaN;
+%q1_clean_height_datum_ppk(inds)=NaN;
 subplot(311)
 plot(datetime_ppk,T2p.height_m_+ ell2ortho,'.-b')
 hold on

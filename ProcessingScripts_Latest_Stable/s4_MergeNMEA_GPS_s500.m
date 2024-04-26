@@ -19,10 +19,9 @@ gps_ind_st=near(GPS.gps_utc_time,start_time);
 gps_ind_en=near(GPS.gps_utc_time,end_time);
 gps_ind=gps_ind_st:gps_ind_en;
 
-sonar_ind_st=near(sonar_dtime_utc_gps,start_time)-40;% 100 is make it abit longer for avoidng nans in time syncing later
-sonar_ind_en=near(sonar_dtime_utc_gps,end_time)+40;
-sonar_ind=sonar_ind_st:sonar_ind_en;
-
+sonar_ind=ones(size(exinds));
+sonar_ind(isnan(exinds))=0;
+sonar_ind=logical(sonar_ind);
 
 
 
@@ -32,7 +31,7 @@ sonar_ind=sonar_ind_st:sonar_ind_en;
 
 figure(8);clf
 
-subplot(411)
+subplot(311)
 hb=plot(sonar_range(sonar_ind),'o-b');
 %dsonar_range=sonar_range;
 %dsonar_range(ping_conf==0)=sonar_range(ping_conf==0);;
@@ -43,7 +42,7 @@ plot(ping_conf(sonar_ind)./100,'.g')
 hb=plot(sonar_range(sonar_ind),'.-r');
 yaxis([prctile(sonar_range(sonar_ind),1)-.1  prctile(sonar_range(sonar_ind),99)+.5])
 
-subplot(412)
+subplot(312)
 
 
 
@@ -65,9 +64,7 @@ hr=plot(dsonar_range,'.r');
 
 title('1st stage of sonar data cleaning using filloutliers')
 legend([hb hr],'raw bottom dection','After 1st stage cleaning')
-subplot(413)
-%hb1=plot(dsonar_range,'.b')
-hold on
+
 %hr1= plot(smoothdata(filloutliers(sonar_range(sonar_ind),'linear',"movmedian",70,'threshold',1.0),20),'.-r');
 title('2nd stage of sonar data cleaning using filloutliers')
 %legend([hb1 hr1],'raw bottom dection','After 2nd stage cleaning')
@@ -79,8 +76,8 @@ else
 end
 sdsonar_range= dsonar_range-smoothdata(filloutliers(sonar_range(sonar_ind),'linear',"movmedian",50,'threshold',1.0),20);
 
-subplot(414)
-plot( sdsonar_range,'.')
+subplot(313)
+plot( sdsonar_range,'ob')
 ninds=abs(sdsonar_range)> rej_thr;
 hold on
 sdsonar_range(ninds)=NaN;
@@ -90,7 +87,7 @@ clean_sonar_range=dsonar_range;
 title('3rd stage of sonar data cleaning using filloutliers..this is with low pass removed')
 
 
-clean_sonar_range=dsonar_range;
+%clean_sonar_range=dsonar_range;
 
 %fdsonar_range2=spikeRemoval(fdsonar_range);
 
@@ -127,7 +124,7 @@ cc=turbo;cc=flipud(cc);
 colormap(cc);
 hc=colorbar;
 hold on
-    caxis([percentile(zc,1) percentile(zc,99)]);
+    caxis([prctile(clean_sonar_range,1) prctile(clean_sonar_range,99)]);
 hc.Label.String='Depth (M)';
 
 mkdir(godir)
@@ -162,6 +159,8 @@ if make_maps
     ynodes=(min(y)-gdx):dx:(max(y)+gdx);
 
     sff= 5e-04;
+ %       sff= 20e-04;
+
     [Zg3,Xg3,Yg3]=RegularizeData3D(x ,y,z,xnodes,ynodes,'smoothness',sff);
     % RegularizeData3D needs to be donwloaded from the matlab file exchange
     %
@@ -174,7 +173,7 @@ if make_maps
     %     scatter(x(fit_inds),y(fit_inds),12,z(fit_inds),'or');
     %     pause(.1)
     % end
-    k=boundary(x,y,.99);%this makes the border/mask for not extrapolating
+    k=boundary(x,y,.7);%this makes the border/mask for not extrapolating
     figure(10);hold on
     plot(x(k),y(k),'k','linewidth',3);
     if 1
@@ -215,7 +214,7 @@ end
     scatter3(loni,lati,zc,12,zc,'filled');
     view(2);
     colorbar;
-    caxis([percentile(zc,1) percentile(zc,99)]);
+    caxis([prctile(zc,1) prctile(zc,99)]);
     clean_sonar_range=-zc;;
 title({'Final  Scatter plot of merged NMEA GNSS data',' and Sonar Depths after 4 stages of cleaning','Holes tend to be regions of consistent wave breaking'} )
     %% Contour plot
@@ -225,7 +224,7 @@ title({'Final  Scatter plot of merged NMEA GNSS data',' and Sonar Depths after 4
    cm2=flipud(pink(40));
   cm=[cm1(1:58,:);(cm2(6:40,:))];
     tanakacontour(DEM,[-15:.5:4]);
-    caxis([percentile(zc,1) percentile(zc,99)]);
+    caxis([prctile(zc,1) prctile(zc,99)]);
     title(['YellowFin survey ' fs ]);
     hold on;
     %plot(x,y,'.k');

@@ -69,7 +69,7 @@ text( end_time_sonar,yl(2)-.5,['end time sonar= ' datestr(end_time_sonar)])
 
 %final time is innerof the two
 start_time=max(datetime(start_time_sonar,'TimeZone','UTC'),start_time_gps)+sonar_start_time_adjust;
-end_time=max(datetime(end_time_sonar,'TimeZone','UTC'),end_time_gps)+sonar_end_time_adjust;
+end_time=min(datetime(end_time_sonar,'TimeZone','UTC'),end_time_gps)+sonar_end_time_adjust;
 
 legend([hb hr],'SonarDepth','moving std filter')
 

@@ -96,7 +96,8 @@ s2_s500_DETECTED_RANGE\_ YYYYMMdd.mat in the matfiles directory.
 
 Parameters for this step are:
 
-echo_profile,boolean - enables processing of echo intensity,0
+echo_profile,boolean - enables processing of echo intensity,0  
+**Note that if the maximum range (length_mm)\_ as set on the USV (sonar_param.csv) is changed during the survey echo_profile,1 will not work and this parameter must set to 0. To process data where length_mm is changed during the survey the data must be divided into two folders an processed each folder must be processed separately.**
 
 system_default_sound_speed,m/s (set in sonar and usually not changed),1500
 
@@ -122,7 +123,7 @@ s2_profile_data\_ YYYYMMdd.mat. It contains the following variables:
 -   dt_profile - timestamps for each ping
 -   range_bins - a vector of range bins for each intensity value
 -   profile_int_matrix - the matrix of intensity values whose size is defined by the number of timestamps by the number of range bins.
--   bed_detect_range - the depth value for each ping determined by a threshold detector in the MATLAB script. This detector could be modified to account for presence of bubbles or other scatterers.
+-   bed_detect_range - the depth value for each ping determined by a threshold detector in the MATLAB script. This detector could be modified to account for the presence of bubbles or other scatterers.
 
 An example of the profile output is shown in Figure 3 below. This data is not normally used for any of the subsequent steps, as the detected depth output is usually sufficient. Manual editing of the detected depth guided by the full intensity profile is under development (3/2/2024).
 

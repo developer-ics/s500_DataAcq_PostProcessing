@@ -1,25 +1,28 @@
 variable, notes-units,value
-survey_day,(year/month/day),2023/05/05
-data_dir,string,F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Yellowfin\ExampleDataPro\MVLPData
+survey_day,(year/month/day),2024/05/01
+data_dir,string,F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Builds\USGS_SC-YF3\res_data\YellowFin_Data-20240503T141122Z-001\
+%***************************
+enable_S1,enables step 1- read NMEA GPS data,1
 
 %***************************
-enable_S1,enables step 1- read NMEA GPS data,0
-
-%***************************
-enable_S2,enables step 2-  reads s500 sonar data,0
-echo_profile,boolean - enables procesing of echo intensity,1
+enable_S2,enables step 2-  reads s500 sonar data,1
+echo_profile,boolean - enables processing of echo intensity,0
 system_default_sound_speed,m/s (set in sonar usually don't change),1500
 measured_sound_speed,m/s,1470
 use_txt_depth_string,1 for older s500 firmware - 0 otherwise,0
 
 %***************************
 enable_S3,enables step 3-  Set Start and End time for processing and assign NMEA GGA sentence based time stamps to sonar data,1
-GPS_thresh,elevation threshold for determining start and end time (m),2
+GPS_thresh,elevation threshold for determining start and end time (m),178
 SONAR_thresh,Sonar bed detection  std threshold for determining start and end time (m),2
-sonar_start_time_adjust,delay the start time of data procssing (minutes),0
-sonar_end_time_adjust,advance the start time of data procssing (minutes),0
+sonar_start_time_adjust,delay the start time of data processing (minutes),60
+sonar_end_time_adjust,advance the start time of data processing (minutes),05
 processing_time,raspberry pi processing delay-usually don't change,0.7
-YF_timezone,raspberry pi time zone on Yellow Fin - usually UTC,America/New_York
+YF_timezone,raspberry pi time zone on Yellow Fin - usually UTC,UTC
+exclusion_start_time_1,year/month/day hh:mm:ss, 2024/05/01 21:34:00
+exclusion_end_time_1,year/month/day hh:mm:ss, 2024/05/01 21:47:23
+exclusion_start_time_2,year/month/day hh:mm:ss, 2024/05/01 21:16:00
+exclusion_end_time_2,year/month/day hh:mm:ss, 2024/05/01 21:24:00
 
 %***************************
 enable_S4,enables step 4-  Merge NMEA GPS DATA and Sonar Data - Sonar Data is cleaned here,1
@@ -29,14 +32,14 @@ spatial_filter_rejection,enables rejection of points spatial_reject_thr above or
 spatial_reject_thr,thershold for spatial_filter_rejection (m),.4
 
 %***************************
-enable_S5,enables step 5-  Load PPK GNSS data,1
+enable_S5,enables step 5-  Load PPK GNSS data,0
 ppk_gpsdata_pos_path,string with  path relative to data_dir and file name of pos file,\Reachr0_20230505160754\Reachr0_raw_20230505160754.pos
 ppk_gpsdata_LLH_path,string with  path relative data_dir  and file name of  LLH file,\Reachr0_20230505160754\Reachr0_solution_20230505160754.LLH
 ell2ortho, used to convert ellopsiodal height data to orthometric - the MV example data was processed in orthometric height so 0 ,0
 
 %***************************
-enable_S6,enables step 6-  Merge PPK GNSS data with  Sonar Data,1
-use_resync,set to 1 to engage clock re-syncing based on gps-sonar heave data correlation,0
+enable_S6,enables step 6-  Merge PPK GNSS data with  Sonar Data,0
+use_resync,set to 1 to engage clock re-syncing based on gps-sonar heave data correletation,0
 gps_leap_offset,should be 18 (seconds),18  
 sync_vert_offset,to make figure(20)  red (gps) and blue (sonar) line overlap vertically for visual inspection of corelation with use_resync =1 (m),-4 
 start_sync_time,start of resyncing period - should be flat bed with waves ,2023/05/05 17:07:00

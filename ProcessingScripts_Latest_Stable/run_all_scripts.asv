@@ -1,8 +1,8 @@
 clear;close('all')
 
 
-inpar_ent='y' % hard codes y
-%inpar_ent=input(['Accept default .\\InputParam.txt or enter input paramter file path\\name (y or path\\name):'] ,"s")
+%inpar_ent='y' % hard codes y
+inpar_ent=input(['Accept default .\\InputParam.txt or enter input paramter file path\\name (y or path\\name):'] ,"s")
 if inpar_ent=='y'
     inpar=[pwd '\InputParam.txt']
 else
@@ -85,7 +85,7 @@ SONAR_thresh=str2num(cell2mat(T2.SONAR_thresh(2)));
  sonar_start_time_adjust=minutes(str2num(cell2mat(T2.sonar_start_time_adjust(2))));% delay the start5
  sonar_end_time_adjust=-minutes(str2num(cell2mat(T2.sonar_end_time_adjust(2))));% advance  the end
 
-
+ %%
 num_exclusions=sum(contains(T2.Properties.VariableNames,'exclusion_start'))
 start_exclusion_ind=find(contains(T2.Properties.VariableNames,'exclusion_start'))
 end_exclusion_ind=find(contains(T2.Properties.VariableNames,'exclusion_end'))
@@ -94,7 +94,7 @@ for ii=1:num_exclusions
 exclusion_start_time(ii)=datetime(T2{2,start_exclusion_ind(ii)},'InputFormat','uuuu/MM/dd HH:mm:ss','TimeZone','UTC');
 exclusion_end_time(ii)=datetime(T2{2,end_exclusion_ind(ii)},'InputFormat','uuuu/MM/dd HH:mm:ss','TimeZone','UTC');
 end
-%
+%%
 
 
 
@@ -113,8 +113,6 @@ else
 
 end
 % % makes figures(6) and 7
-
-
  %%  Merge NMEA GPS DATA and Sonar Data. Sonar Data is cleaned here
 % % look at lines 29 thru 81 for 3 stages of time series cleaning
 % %  look at lines 156 177 for rejection of outlier from a spatiall smoothed
@@ -139,10 +137,8 @@ else
 end
 % % makes figures(8) to (13)
 %
-
-if 0
-%% Load PPK GNSS data
- keep3('survey_day','fs','fs2','odir','godir','data_dir','T2')
+ %% Load PPK GNSS data
+% keep3('survey_day','fs','fs2','odir','godir','data_dir','T2')
 %  LLH data from emlid studio should be in:
 %  and PPK *.pos data in :
 
@@ -185,7 +181,7 @@ end
 % % accepatble as the code will use non-zero values.
 % % Large values over 10 might  indicate a timing problem
 %
- keep3('survey_day','fs','fs2','odir','godir','data_dir','T2');
+% keep3('survey_day','fs','fs2','odir','godir','data_dir','T2');
  %use_resync=0;
   use_resync =str2num(cell2mat(T2.use_resync(2)));
 
@@ -217,4 +213,3 @@ if enable_S6
 end
 % % makes figures (16) to (24)
 disp('Done hit ctrl-c to exit if running complied version')
-end

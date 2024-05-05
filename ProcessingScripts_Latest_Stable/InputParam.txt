@@ -37,13 +37,13 @@ spatial_reject_thr,thershold for spatial_filter_rejection (m),.4
 enable_S5,enables step 5-  Load PPK GNSS data,0
 ppk_gpsdata_pos_path,string with  path relative to data_dir and file name of pos file,\Reachr0_20230505160754\Reachr0_raw_20230505160754.pos
 ppk_gpsdata_LLH_path,string with  path relative data_dir  and file name of  LLH file,\Reachr0_20230505160754\Reachr0_solution_20230505160754.LLH
-ell2ortho, used to convert ellopsiodal height data to orthometric - the MV example data was processed in orthometric height so 0 ,0
+ell2ortho, used to convert ellipsoidal height data to orthometric - the MV example data was processed in orthometric height so 0 ,0
 
 %***************************
 enable_S6,enables step 6-  Merge PPK GNSS data with  Sonar Data,0
 use_resync,set to 1 to engage clock re-syncing based on gps-sonar heave data correletation,0
 gps_leap_offset,should be 18 (seconds),18  
-sync_vert_offset,to make figure(20)  red (gps) and blue (sonar) line overlap vertically for visual inspection of corelation with use_resync =1 (m),-4 
+sync_vert_offset,to make figure(20)  red (gps) and blue (sonar) line overlap vertically for visual inspection of correlation with use_resync =1 (m),-4 
 start_sync_time,start of resyncing period - should be flat bed with waves ,2023/05/05 17:07:00
 end_sync_time, year/month/day hh:mm:ss,2023/05/05 17:11:00
 make_maps_ppk,enables mapping output with ppk heave compensation during step 6,1

@@ -1,10 +1,10 @@
 clear;close('all')
 
 
-%inpar_ent='y' % hard codes y
-inpar_ent=input(['Accept default .\\InputParam.txt or enter input paramter file path\\name (y or path\\name):'] ,"s")
+inpar_ent='y' % hard codes y
+%inpar_ent=input(['Accept default .\\InputParam.txt or enter input paramter file path\\name (y or path\\name):'] ,"s")
 if inpar_ent=='y'
-    inpar=[pwd '\InputParam.txt']
+    inpar=[pwd '\InputParamVA.txt']
 else
       inpar=inpar_ent;
 end
@@ -50,7 +50,7 @@ end
 % % where data_dir =pwdis the location of this script
 dirstr2=[data_dir  '\Data\s500\' fs]
 %
-int_pro=str2num(cell2mat(T2.echo_profile(2)));  % processing of full intensity profile, usually should be zero . built in bed detection is suffcient
+int_pro=str2num(cell2mat(T2.echo_profile(2)));  % processing of full intensity profile, usually should be zero . built in bed detection is usually suffcient
  system_default_sound_speed=str2num(cell2mat(T2.system_default_sound_speed(2)));
 %d=2
 %p = 101.325+1025*9.81*d/1000
@@ -70,6 +70,18 @@ end
 %
 %  with profiles on creates figure 1 to 4. Otherwise just 5
 %
+%%  s3_Intensity_profile_bed_detection
+ keep3('survey_day','fs','fs2','odir','godir','data_dir','T2');
+dirstr2=[data_dir  '\Data\s500\' fs]
+
+enable_S3=str2num(cell2mat(T2.enable_S3(2)));
+
+if enable_S3
+        disp("Running Step 3")
+s3_Intensity_profile_bed_detection
+else
+        disp("Skipped Step 3")
+end
 %% Set Start and End time for processing and assign NMEA GGA sentence based time stamps to sonar data
 %  this should eliminate any issues with data logger time set incorrectly
  keep3('survey_day','fs','fs2','odir','godir','data_dir','T2');
@@ -85,7 +97,7 @@ SONAR_thresh=str2num(cell2mat(T2.SONAR_thresh(2)));
  sonar_start_time_adjust=minutes(str2num(cell2mat(T2.sonar_start_time_adjust(2))));% delay the start5
  sonar_end_time_adjust=-minutes(str2num(cell2mat(T2.sonar_end_time_adjust(2))));% advance  the end
 
- %%
+
 num_exclusions=sum(contains(T2.Properties.VariableNames,'exclusion_start'))
 start_exclusion_ind=find(contains(T2.Properties.VariableNames,'exclusion_start'))
 end_exclusion_ind=find(contains(T2.Properties.VariableNames,'exclusion_end'))
@@ -94,7 +106,7 @@ for ii=1:num_exclusions
 exclusion_start_time(ii)=datetime(T2{2,start_exclusion_ind(ii)},'InputFormat','uuuu/MM/dd HH:mm:ss','TimeZone','UTC');
 exclusion_end_time(ii)=datetime(T2{2,end_exclusion_ind(ii)},'InputFormat','uuuu/MM/dd HH:mm:ss','TimeZone','UTC');
 end
-%%
+%
 
 
 
@@ -103,21 +115,23 @@ end
 
  processing_time=seconds(str2num(cell2mat(T2.processing_time(2))));
 
-enable_S3=str2num(cell2mat(T2.enable_S3(2)));
-if enable_S3
-            disp("Running Step 3")
+enable_S4=str2num(cell2mat(T2.enable_S4(2)));
+if enable_S4
+            disp("Running Step 4")
 
-s3_Set_start_end_time_sync
+s4_Set_start_end_time_sync
 else
-        disp("Skipped Step 3")
+        disp("Skipped Step 4")
 
 end
 % % makes figures(6) and 7
+
+
  %%  Merge NMEA GPS DATA and Sonar Data. Sonar Data is cleaned here
 % % look at lines 29 thru 81 for 3 stages of time series cleaning
 % %  look at lines 156 177 for rejection of outlier from a spatiall smoothed
 % %  solution
- keep3('survey_day','fs','fs2','odir','godir','data_dir','T2');
+ keep3('survey_day','fs','fs2','odir','godir','data_dir','T2','processing_time');
 
  % enables time series despking based on median filters
   despike_on=str2num(cell2mat(T2. despike_on(2)));
@@ -126,19 +140,21 @@ end
  make_maps=str2num(cell2mat(T2.make_maps(2)));
  spatial_filter_rejection=str2num(cell2mat(T2. spatial_filter_rejection(2)));
 spatial_reject_thr=str2num(cell2mat(T2. spatial_reject_thr(2)));
-enable_S4=str2num(cell2mat(T2.enable_S4(2)));
-if enable_S4
-                disp("Running Step 4")
+enable_s5=str2num(cell2mat(T2.enable_S5(2)));
+if enable_s5
+                disp("Running Step 5")
 
-s4_MergeNMEA_GPS_s500
+s5_MergeNMEA_GPS_s500
 else
-        disp("Skipped Step 4")
+        disp("Skipped Step 5")
 
 end
 % % makes figures(8) to (13)
 %
- %% Load PPK GNSS data
-% keep3('survey_day','fs','fs2','odir','godir','data_dir','T2')
+
+if 0
+%% Load PPK GNSS data
+ keep3('survey_day','fs','fs2','odir','godir','data_dir','T2')
 %  LLH data from emlid studio should be in:
 %  and PPK *.pos data in :
 
@@ -156,12 +172,12 @@ ppk_gpsdata_LLH_path=char(T2.ppk_gpsdata_LLH_path(2))
 % ell2ortho = 29.028 % from https://vdatum.noaa.gov/vdatumweb/
  %v ;% the Martha's Vineyard example data was processed in orthometric height
  ell2ortho =str2num(cell2mat(T2.ell2ortho(2)));
-enable_S5=str2num(cell2mat(T2.enable_S5(2)));
-if enable_S5
-                    disp("Running Step 5")
-    s5_read_emlid_LLH_PPK
+enable_S6=str2num(cell2mat(T2.enable_S5(2)));
+if enable_S6
+                    disp("Running Step 6")
+    s6_read_emlid_LLH_PPK
     else
-        disp("Skipped Step 5")
+        disp("Skipped Step 6")
 end
 %
 % % makes figures(14) to (15)
@@ -181,7 +197,7 @@ end
 % % accepatble as the code will use non-zero values.
 % % Large values over 10 might  indicate a timing problem
 %
-% keep3('survey_day','fs','fs2','odir','godir','data_dir','T2');
+ keep3('survey_day','fs','fs2','odir','godir','data_dir','T2');
  %use_resync=0;
   use_resync =str2num(cell2mat(T2.use_resync(2)));
 
@@ -204,12 +220,13 @@ xl
 
    make_maps_ppk =str2num(cell2mat(T2.make_maps_ppk(2)));
 
-enable_S6=str2num(cell2mat(T2.enable_S6(2)));
-if enable_S6
+enable_S7=str2num(cell2mat(T2.enable_S7(2)));
+if enable_S7
      disp("Running Step 6")
  s6_MergePPKGPS_sonar
    else
-        disp("Skipped Step 6")
+        disp("Skipped Step 67")
 end
 % % makes figures (16) to (24)
 disp('Done hit ctrl-c to exit if running complied version')
+end

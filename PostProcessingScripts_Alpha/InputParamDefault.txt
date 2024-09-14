@@ -3,10 +3,10 @@ survey_day,(year/month/day),2023/05/05
 data_dir,string,F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Yellowfin\ExampleDataPro\MVLPData
 
 %***************************
-enable_S1,enables step 1- read NMEA GPS data,0
+enable_S1,enables step 1- read NMEA GPS data,1
 
 %***************************
-enable_S2,enables step 2-  reads s500 sonar data,0
+enable_S2,enables step 2-  reads s500 sonar data,1
 echo_profile,boolean - enables procesing of echo intensity,1
 system_default_sound_speed,m/s (set in sonar usually don't change),1500
 measured_sound_speed,m/s,1470
@@ -36,7 +36,7 @@ ell2ortho, used to convert ellopsiodal height data to orthometric - the MV examp
 
 %***************************
 enable_S6,enables step 6-  Merge PPK GNSS data with  Sonar Data,1
-use_resync,set to 1 to engage clock re-syncing based on gps-sonar heave data correlation,0
+use_resync,set to 1 to engage clock re-syncing based on gps-sonar heave data correletation,0
 gps_leap_offset,should be 18 (seconds),18  
 sync_vert_offset,to make figure(20)  red (gps) and blue (sonar) line overlap vertically for visual inspection of corelation with use_resync =1 (m),-4 
 start_sync_time,start of resyncing period - should be flat bed with waves ,2023/05/05 17:07:00

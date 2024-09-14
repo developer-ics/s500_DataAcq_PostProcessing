@@ -1,18 +1,9 @@
 outname=[odir 's1_NMEA_GNSS_DATA_' fs2]
 GPS=load(outname);
 
-if 0 % use the matlab bed deection from profile data..not fully supported yet
-    S=load(['profile_data' dirstr '.mat'])
-    sonar_time=S.dt_profile
-    sonar_range=S.bed_detect_range';
-end
 
-if 1 % use the cerulean instantaenous bed detection . Not sure about delay with smoothed
-    load([odir 's3_s500_DETECTED_RANGE_synced_' fs2 '.mat'])
-end
-
-
-load([odir 's3_START_END_TIMES_' fs2 '.mat'])
+load([odir 's4_s500_DETECTED_RANGE_synced_' fs2])
+load([odir 's4_START_END_TIMES_' fs2 '.mat'])
 
 %% use start and end times to set inds
 gps_ind_st=near(GPS.gps_utc_time,start_time);
@@ -134,7 +125,8 @@ print('-dpng',[godir 's4_Initial Scatter Plot Survey' fs2]);
 longitude=loni;
 latitude=lati;
 depth_from_xducer_no_heave_comp=clean_sonar_range;
-To=table(longitude,latitude,depth_from_xducer_no_heave_comp);
+sonar_time=sonar_dtime_utc_gps_g;
+To=table(sonar_time,longitude,latitude,depth_from_xducer_no_heave_comp);
 writetable(To,[odir 'No_Heave_Correction_Trackline_Data' fs2 '.txt'])
 
 %% the following fits a surface and makes a contour and  geotiff..probabaly should wait to after ppk in most cases
@@ -158,7 +150,7 @@ if make_maps
     xnodes=(min(x)-gdx):dx:(max(x)+gdx);
     ynodes=(min(y)-gdx):dx:(max(y)+gdx);
 
-    sff= 2e-04;
+    sff= .2e-04;
  %       sff= 20e-04;
 
     [Zg3,Xg3,Yg3]=RegularizeData3D(x ,y,z,xnodes,ynodes,'smoothness',sff);
@@ -192,19 +184,20 @@ if make_maps
     %
     figure(11); clf;%more cleaning
     subplot(211)
-   hr2= plot(zi,'.r');
+   hr2= plot(sonar_time,zi,'.r');
     hold on
-    hb2=plot(-clean_sonar_range,'b');
+    hb2=plot(sonar_time,-clean_sonar_range,'b');
     title('Spatially smoothed data from surface fit  and cleaned data input into surface fitting ')
     legend([hr2 hb2],'Spatially smoothed data from surface fit','cleaned data input into surface fitting')
     subplot(212)
-    plot(zi+clean_sonar_range,'.')
+    plot(sonar_time,zi+clean_sonar_range,'.')
 title("difference of above quatities..Data above and below red lines (spatial_reject_thr) is rejected ")
     zc=-clean_sonar_range;
         
 hold on
 xl=xlim;
-        plot(xl,[spatial_reject_thr spatial_reject_thr],'r');        plot(xl,-[spatial_reject_thr spatial_reject_thr],'r')
+        plot(xl,[spatial_reject_thr spatial_reject_thr],'r');      
+ plot(xl,-[spatial_reject_thr spatial_reject_thr],'r')
 if spatial_filter_rejection
     zc(abs(zi+clean_sonar_range)>spatial_reject_thr)=NaN; % reject outlier based on differecne with a therhold of 0.4 m from spatially smoothed results'
 end
@@ -224,8 +217,8 @@ title({'Final  Scatter plot of merged NMEA GNSS data',' and Sonar Depths after 4
    cm2=flipud(pink(40));
   cm=[cm1(1:58,:);(cm2(6:40,:))];
   zlim=[prctile(zc,1)-1, prctile(zc,99)+1];
-    tanakacontour(DEM,[prctile(zc,1) :.5:(prctile(zc,99)+1)]);
-    caxis();
+    tanakacontour(DEM,[zlim(1):.05:zlim(2)]);
+    caxis(zlim);
     title(['YellowFin survey ' fs ]);
     hold on;
     %plot(x,y,'.k');

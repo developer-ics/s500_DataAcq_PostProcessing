@@ -4,19 +4,19 @@ Processing as described in this section has been designed to allow maximum flexi
 
 The post-processing of Yellowfin S500 sonar and GNSS data is a multistep process. Matlab scripts are available at the ICS github at the following link:
 
-https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/ProcessingScripts_Latest_Stable
+https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/ProcessingScripts_Alpha
 
 The compiled executables are located in:
 
-<https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/ProcessingScripts_Latest_Stable/MatlabRuntimeCompiledExes/YellowFin_Processing>
+[https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/ProcessingScripts_Alpha/MatlabRuntimeCompiledExes/YellowFin_Processing](https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/ProcessingScripts_Latest_Stable/MatlabRuntimeCompiledExes/YellowFin_Processing)
 
 The run time environment can be installed using:
 
-<https://github.com/developer-ics/s500_DataAcq_PostProcessing/blob/main/ProcessingScripts_Latest_Stable/MatlabRuntimeCompiledExes/YellowFin_Processing/for_redistribution/MyAppInstaller_web.exe>
+[https://github.com/developer-ics/s500_DataAcq_PostProcessing/blob/main/ProcessingScripts_Alpha/MatlabRuntimeCompiledExes/YellowFin_Processing/for_redistribution/MyAppInstaller_web.exe](https://github.com/developer-ics/s500_DataAcq_PostProcessing/blob/main/ProcessingScripts_Latest_Stable/MatlabRuntimeCompiledExes/YellowFin_Processing/for_redistribution/MyAppInstaller_web.exe)
 
 and then processing script is run using:
 
-<https://github.com/developer-ics/s500_DataAcq_PostProcessing/blob/main/ProcessingScripts_Latest_Stable/MatlabRuntimeCompiledExes/YellowFin_Processing/for_redistribution_files_only/YellowFin_Processing.exe>
+[https://github.com/developer-ics/s500_DataAcq_PostProcessing/blob/main/ProcessingScripts_Alpha/MatlabRuntimeCompiledExes/YellowFin_Processing/for_redistribution_files_only/YellowFin_Processing.exe](https://github.com/developer-ics/s500_DataAcq_PostProcessing/blob/main/ProcessingScripts_Latest_Stable/MatlabRuntimeCompiledExes/YellowFin_Processing/for_redistribution_files_only/YellowFin_Processing.exe)
 
 During processing a number of sequentially numbered plots are auto-generated in Matlab, labeled as Figure \<nn\>. A typical output is shown in Figure 1, below.
 
@@ -24,7 +24,7 @@ During processing a number of sequentially numbered plots are auto-generated in 
 |-----------------------------------------------------------------|
 | Figure 1. Sample PPK GNSS Altitude and Sonar Bed Elevation data |
 
-Individual scrips are available for each step of the process and a master script (run_all_scripts.m) that calls the scripts for each step is also provided. run_all_scripts.m is well documented to describe each step of the processing. This file should be located in the directory (data_dir) with the downloaded data files for each survey. It is located in the SampleData folders on github at the following link: <https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/SampleData>
+Individual scrips are available for each step of the process and a master script (run_all_scripts.m) that calls the scripts for each step is also provided. run_all_scripts.m is documented to describe each step of the processing.. It is located in the SampleData folders on github at the following link: <https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/SampleData>
 
 Two sample datasets are available:
 
@@ -32,7 +32,7 @@ MVLPData is from the south coast of Martha’s Vineyard with substantial heave a
 
 <https://github.com/developer-ics/s500_DataAcq_PostProcessing/tree/main/SampleData/MVLPData>
 
-A InputParam.txt file for this data set is located in <https://github.com/developer-ics/s500_DataAcq_PostProcessing/blob/main/ProcessingScripts_Latest_Stable/MatlabRuntimeCompiledExes/YellowFin_Processing/for_redistribution_files_only/YellowFin_Processing.exe>
+A InputParam.txt file for this data set is located in [https://github.com/developer-ics/s500_DataAcq_PostProcessing/blob/main/ProcessingScripts_Alpha/MatlabRuntimeCompiledExes/YellowFin_Processing/for_redistribution_files_only/YellowFin_Processing.exe](https://github.com/developer-ics/s500_DataAcq_PostProcessing/blob/main/ProcessingScripts_Latest_Stable/MatlabRuntimeCompiledExes/YellowFin_Processing/for_redistribution_files_only/YellowFin_Processing.exe)
 
 Thus running YellowFin_Processing,exe and answering y at the 1st prompt will process this sample data. The path to the sample data in the InputParam.txt file will need to be edited from
 
@@ -105,7 +105,7 @@ measured_sound_speed,m/s,1426
 
 use_txt_depth_string,1 for older s500 firmware - 0 otherwise,0
 
-The echo_profile processing is under development and the results of this are not used in subsequent steps.
+The echo_profile (echo_profile,boolean - enables processing of echo intensity,1) processing can be used if the real time bed detection on the sonar fails . this will produce an output file s2_profile_data_yyyymmdd.mat
 
 This resulting file contains the detected depth (calculated internally by the S500 sonar) along with the following variables:
 
@@ -125,21 +125,35 @@ s2_profile_data\_ YYYYMMdd.mat. It contains the following variables:
 -   profile_int_matrix - the matrix of intensity values whose size is defined by the number of timestamps by the number of range bins.
 -   bed_detect_range - the depth value for each ping determined by a threshold detector in the MATLAB script. This detector could be modified to account for the presence of bubbles or other scatterers.
 
-An example of the profile output is shown in Figure 3 below. This data is not normally used for any of the subsequent steps, as the detected depth output is usually sufficient. Manual editing of the detected depth guided by the full intensity profile is under development (3/2/2024).
+An example of the profile output is shown in Figure 3 below. Computational detection of the bed is available in this Alpha release. See step 3. Manual editing of the detected depth guided by the full intensity profile is under development (9/15/2024).
 
 ![](media/e99634f1ec35fe88e38fb188cae6ce19.jpg)
 
 Figure 3– Typical Full Intensity Profile Plot (ID=1308)
 
-### Setting Start & End Times (Step 3)
+### s3_Intensity_profile_bed_detection (Step 3)
 
-The script s3_Set_start_end_time_sync sets the start and end times for processing based on when drops below some height and rises above a height defined by GPS_thresh,elevation. This defines the threshold for determining start and end time (m). A value of 1 or 2 is typical of coastal surveys as the vehicle drops below 1 m (MSL) before launch
+The script s3_Intensity_profile_bed_detection calculates the bed location from the intensity profiles generated in step 2. This requires echo_profile set to 1. There are several important parameters in this script that are not yet exposed in the InputParam.txt file but will be soon. Some of these are
+
+blank_r=.4;
+
+max_r=1.8;
+
+int_prct_thresh_val=93;
+
+clean_filt_length=13;
+
+### Setting Start & End Times (Step 4)
+
+The script s4_Set_start_end_time_sync sets the start and end times for processing based on when the GPS height drops below some height and rises above a height defined by GPS_thresh,elevation. This defines the threshold for determining start and end time (m). A value of 1 or 2 is typical of coastal surveys as the vehicle drops below 1 m (MSL) before launch.
+
+Use_Realtime_Bed_Detection, Uses s500 built in realtime bed detection. set to 0 to use Intensity_profile_bed_detection results from step 3,0
 
 A second check is performed based on running a standard filter on the detected bed return with a threshold defined by SONAR_thres. This is the Sonar bed detection threshold for determining start and end time (in m) – typically set to 2
 
 The shorter of these two time spans is used for subsequent processing steps. If required, additional delay can be specified by the variable sonar_start_time_adjust and sonar_end_time_adjust. This script also writes the GPS time stamps to the sonar data by using the datalogger time stamps that are acquired with the GNSS and sonar data, eliminating the effects of realtime clock synchronization errors on the datalogger.
 
-Exclusion periods can be assigned for periods when data was knoen to be bad. Eg USV was taken out of the water.There can be as many exclusion periods as desired:
+Exclusion periods can be assigned for periods when data was known to be bad. Eg USV was taken out of the water.There can be as many exclusion periods as desired:
 
 exclusion_start_time_1,year/month/day hh:mm:ss, 2024/02/09 16:16:20
 
@@ -149,9 +163,9 @@ exclusion_start_time_2,year/month/day hh:mm:ss, 2024/02/09 16:32:20
 
 exclusion_end_time_2,year/month/day hh:mm:ss, 2024/02/09 16:37:15
 
-### Combining NMEA & Sonar Data (Step 4)
+### Combining NMEA & Sonar Data (Step 5)
 
-The script s4_MergeNMEA_GPS_s50 combines the NMEA and sonar data. Two rounds of data filtering using median filters are performed. These can be enabled or disabled by despike_on, enables time series despking based on median filters,1
+The script s5_MergeNMEA_GPS_s500 combines the NMEA and sonar data. Two rounds of data filtering using median filters are performed. These can be enabled or disabled by despike_on, enables time series despking based on median filters,1
 
 This script produces a scatterplot with dots colored by depth as a function of latitude (lat) and longitude (lon) and a contour map of the depth if the variable make_maps is set to 1.
 
@@ -161,15 +175,15 @@ These steps will remove short periods (less than a few seconds) of bad data (out
 
 The depth ouptut in this step is relative to the ASV altitude (i.e. - not a Geodetic datum) and is not corrected for heave. To correct for heave the PPK post-processed GNSS data is required.
 
-### Emlid File Conversion (Step 5)
+### Emlid File Conversion (Step 6)
 
-The script s5_read_emlid_LLH_PPK reads the Emlid Reach files that are created in the Emlid Studio post processing software and converts the data from these files to MATLAB format files for merging with sonar data. **Note** - both \*.LLH and \*.pos files are required and should be left in the uncompressed folders created by the Emlid software. A conversion from ellipsoidal height to orthometric height can be defined by the variable ell2ortho.
+The script s6_read_emlid_LLH_PPK reads the Emlid Reach files that are created in the Emlid Studio post processing software and converts the data from these files to MATLAB format files for merging with sonar data. **Note** - both \*.LLH and \*.pos files are required and should be left in the uncompressed folders created by the Emlid software. A conversion from ellipsoidal height to orthometric height can be defined by the variable ell2ortho.
 
-### Merging Data (Step 6)
+### Merging Data (Step 7)
 
-The script s6_MergePPKGPS_sonar merges the PPK GNSS data saved in
+The script s7_MergePPKGPS_sonar merges the PPK GNSS data saved in
 
-s5_read_emlid_LLH_PPK with the sonar data to create output products that are heave compensated and correctly referenced to the datum of the PPK GNSS data.
+s6_read_emlid_LLH_PPK with the sonar data to create output products that are heave compensated and correctly referenced to the datum of the PPK GNSS data.
 
 There is an important step in this processing script that looks for any temporal synchronization errors by correlating heave signals from echosounder data and PPK GNSS data. This methodology has been tested extensively with the S500 sonar and Emlid Reach GNSS systems. In most cases, the synchronization performed in Section 9.4.4 is usually sufficient and this step is not needed.
 

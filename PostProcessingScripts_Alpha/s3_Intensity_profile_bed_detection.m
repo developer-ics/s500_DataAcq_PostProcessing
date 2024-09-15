@@ -47,7 +47,8 @@ title('hybrid median filtered profile_data - with blanking and max range applied
     figure(103);clf
 
 subplot(211)
-    thr=prctile(filt_prof_data,93);
+int_prct_thresh_val=93;
+    thr=prctile(filt_prof_data,int_prct_thresh_val);
     [m,n]=size(filt_prof_data);
     for ii =1:n
         tmp1= find(imfilter(filt_prof_data(:,ii),ones(10,1)./10)>thr(ii),1,'first');
@@ -81,8 +82,9 @@ title('hybrid median filtered profile_data - with 1st and last thershold detecti
 
 
     subplot(212)
-     bed_detect_range1=clean0(range_bins(bed_detect_ind1+blank_ind),13,.25);
-    bed_detect_range2=clean0(range_bins(bed_detect_ind2+blank_ind),13,.25);
+    clean_filt_length=13;
+     bed_detect_range1=clean0(range_bins(bed_detect_ind1+blank_ind),    clean_filt_length,.25);
+    bed_detect_range2=clean0(range_bins(bed_detect_ind2+blank_ind),    clean_filt_length,.25);
      %    bed_detect_range1=spikeRemoval(range_bins(bed_detect_ind1+blank_ind),'wnsz',50,'nstd',.5,'npass',2,'debug',0);
 %   bed_detect_range2=spikeRemoval(range_bins(bed_detect_ind2+blank_ind),'wnsz',50,'nstd',.5,'npass',2,'debug',0);
     pcolor(dt_profile,reduced_range_bins, filt_prof_data)

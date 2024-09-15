@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="2050552087" file="F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\ProcessingScripts_Latest_Stable\YellowFin_Processing.prj" location="F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\ProcessingScripts_Latest_Stable" name="YellowFin_Processing" preferred-package-location="F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\ProcessingScripts_Latest_Stable\YellowFin_Processing\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="1536348243" file="F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\PostProcessingScripts_Alpha\YellowFin_Processing.prj" location="F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\PostProcessingScripts_Alpha" name="YellowFin_Processing" preferred-package-location="F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\PostProcessingScripts_Alpha\YellowFin_Processing\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>YellowFin_Processing</param.appname>
     <param.icon />
     <param.icons />
@@ -7,8 +7,8 @@
     <param.authnamewatermark>Peter Traykovski</param.authnamewatermark>
     <param.email>ptraykovski@integratedcoastalsolutions.com</param.email>
     <param.company>Integrated Coastal Solutions</param.company>
-    <param.summary>YellowFin USV Bathymetry Processing</param.summary>
-    <param.description>Read Cerulean s500 sonar data and Emlid Reach PPK GPS data and creates bathymetry products</param.description>
+    <param.summary />
+    <param.description />
     <param.screenshot>${PROJECT_ROOT}\media\splash.jpg</param.screenshot>
     <param.guid />
     <param.installpath.string>\Integrated Coastal Solutions\YellowFin_Processing\</param.installpath.string>
@@ -32,7 +32,7 @@
     <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
     <param.windows.command.prompt>false</param.windows.command.prompt>
     <param.create.log>true</param.create.log>
-    <param.log.file>YellowFinProcessing_exe_LOG</param.log.file>
+    <param.log.file>YellowLog</param.log.file>
     <param.native.matlab>false</param.native.matlab>
     <param.checkbox>false</param.checkbox>
     <param.example />
@@ -46,6 +46,8 @@
       <param.icon />
       <param.icons />
       <param.version />
+      <param.summary />
+      <param.description />
       <param.guid />
       <param.installpath.string />
       <param.installpath.combo />
@@ -73,20 +75,26 @@
     <fileset.main>
       <file>${PROJECT_ROOT}\run_all_scripts.m</file>
     </fileset.main>
-    <fileset.resources>
+    <fileset.resources />
+    <fileset.package>
       <file>${PROJECT_ROOT}\s1_readNMEAfiles.m</file>
       <file>${PROJECT_ROOT}\s2_read_s500sonar.m</file>
-      <file>${PROJECT_ROOT}\s3_Set_start_end_time_sync.m</file>
-      <file>${PROJECT_ROOT}\s4_MergeNMEA_GPS_s500.m</file>
-      <file>${PROJECT_ROOT}\s5_read_emlid_LLH_PPK.m</file>
-      <file>${PROJECT_ROOT}\s6_MergePPKGPS_sonar.m</file>
-    </fileset.resources>
-    <fileset.package />
+      <file>${PROJECT_ROOT}\s3_Intensity_profile_bed_detection.m</file>
+      <file>${PROJECT_ROOT}\s4_Set_start_end_time_sync.m</file>
+      <file>${PROJECT_ROOT}\s5_MergeNMEA_GPS_s500.m</file>
+      <file>${PROJECT_ROOT}\s6_read_emlid_LLH_PPK.m</file>
+      <file>${PROJECT_ROOT}\s7_MergePPKGPS_sonar.m</file>
+    </fileset.package>
     <fileset.depfun>
+      <file>${PROJECT_ROOT}\s1_readNMEAfiles.m</file>
+      <file>${PROJECT_ROOT}\s2_read_s500sonar.m</file>
+      <file>${PROJECT_ROOT}\s3_Intensity_profile_bed_detection.m</file>
+      <file>${PROJECT_ROOT}\s4_Set_start_end_time_sync.m</file>
+      <file>${PROJECT_ROOT}\s5_MergeNMEA_GPS_s500.m</file>
+      <file>${PROJECT_ROOT}\s6_read_emlid_LLH_PPK.m</file>
       <file>F:\GDriveWHOI\My Drive\Matools\clean0.m</file>
       <file>F:\GDriveWHOI\My Drive\Matools\hmf.m</file>
       <file>F:\GDriveWHOI\My Drive\Matools\keep3.m</file>
-      <file>F:\GDriveWHOI\My Drive\Matools\map_aspect_ratio.m</file>
       <file>F:\GDriveWHOI\My Drive\Matools\near.m</file>
       <file>F:\GDriveWHOI\My Drive\Matools\OpenEarth\db\format</file>
       <file>F:\GDriveWHOI\My Drive\Matools\OpenEarth\matlab\general\plot_fun\hillshade.m</file>
@@ -213,14 +221,13 @@
       <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\utilities\interpline.m</file>
       <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\utilities\ixneighbors.m</file>
       <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\utilities\multilevel_otsu.m</file>
-      <file>F:\GDriveWHOI\My Drive\Matools\xaxis.m</file>
       <file>F:\GDriveWHOI\My Drive\Matools\xzoom.m</file>
       <file>F:\GDriveWHOI\My Drive\Matools\yaxis.m</file>
     </fileset.depfun>
     <build-deliverables>
-      <file location="${PROJECT_ROOT}\YellowFin_Processing\for_testing" name="readme.txt" optional="true">F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\ProcessingScripts_Latest_Stable\YellowFin_Processing\for_testing\readme.txt</file>
-      <file location="${PROJECT_ROOT}\YellowFin_Processing\for_testing" name="YellowFin_Processing.exe" optional="false">F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\ProcessingScripts_Latest_Stable\YellowFin_Processing\for_testing\YellowFin_Processing.exe</file>
-      <file location="${PROJECT_ROOT}\YellowFin_Processing\for_testing" name="splash.png" optional="false">F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\ProcessingScripts_Latest_Stable\YellowFin_Processing\for_testing\splash.png</file>
+      <file location="${PROJECT_ROOT}\YellowFin_Processing\for_testing" name="splash.png" optional="false">F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\PostProcessingScripts_Alpha\YellowFin_Processing\for_testing\splash.png</file>
+      <file location="${PROJECT_ROOT}\YellowFin_Processing\for_testing" name="YellowFin_Processing.exe" optional="false">F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\PostProcessingScripts_Alpha\YellowFin_Processing\for_testing\YellowFin_Processing.exe</file>
+      <file location="${PROJECT_ROOT}\YellowFin_Processing\for_testing" name="readme.txt" optional="true">F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\PostProcessingScripts_Alpha\YellowFin_Processing\for_testing\readme.txt</file>
     </build-deliverables>
     <workflow />
     <matlab>

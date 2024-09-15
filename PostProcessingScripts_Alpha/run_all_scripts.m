@@ -1,10 +1,10 @@
 clear;close('all')
 
 
-inpar_ent='y' % hard codes y
-%inpar_ent=input(['Accept default .\\InputParam.txt or enter input paramter file path\\name (y or path\\name):'] ,"s")
+%inpar_ent='y' % hard codes y
+inpar_ent=input(['Accept default .\\InputParam.txt or enter input paramter file path\\name (y or path\\name):'] ,"s")
 if inpar_ent=='y'
-    inpar=[pwd '\InputParamVA.txt']
+    inpar=[pwd '\InputParam.txt']
 else
       inpar=inpar_ent;
 end
@@ -29,7 +29,7 @@ odir=[data_dir '\matfiles_'  fs2 '\'];% location of matfiles that are stored in 
 godir=[data_dir '\image_files_'  fs2 '\'];% location of  graphicsfiles that are generated in processing
 mkdir(odir)
 mkdir(godir)
-%% reads NMEA gps data written to rasbpi logger
+%% Step 1: reads NMEA gps data written to rasbpi logger
 % these should be in dirstr = .\Data\nmeadata\MM-dd-yyyy\
 % where data_dir =pwd is the location of this script
 dirstr1=[data_dir '\Data\nmeadata\' fs]
@@ -44,7 +44,7 @@ end
 
 %no figures
 
- %% reads s500 sonar data written to rasbpi logger
+ %% Step 2: reads s500 sonar data written to rasbpi logger
  keep3('survey_day','fs','fs2','odir','godir','data_dir','T2');
 % % these should be in dirstr =  [data_dir '\Data\s500\MM-dd-yyyy\']
 % % where data_dir =pwdis the location of this script
@@ -70,7 +70,7 @@ end
 %
 %  with profiles on creates figure 1 to 4. Otherwise just 5
 %
-%%  s3_Intensity_profile_bed_detection
+%% Step 3:  s3_Intensity_profile_bed_detection
  keep3('survey_day','fs','fs2','odir','godir','data_dir','T2');
 dirstr2=[data_dir  '\Data\s500\' fs]
 
@@ -82,10 +82,12 @@ s3_Intensity_profile_bed_detection
 else
         disp("Skipped Step 3")
 end
-%% Set Start and End time for processing and assign NMEA GGA sentence based time stamps to sonar data
+%% Step 4: Set Start and End time for processing and assign NMEA GGA sentence based time stamps to sonar data
 %  this should eliminate any issues with data logger time set incorrectly
  keep3('survey_day','fs','fs2','odir','godir','data_dir','T2');
 % % GPS based start is when gps drops below GPS_thresh m MSL, end is when goes above GPS_thresh m MSL
+  Use_Realtime_Bed_Detection=str2num(cell2mat(T2.Use_Realtime_Bed_Detection(2)));
+
  GPS_thresh=str2num(cell2mat(T2.GPS_thresh(2)));
 
 %  Sonar based start is when std(depth) drops below SONAR_thresh m , end is when it
@@ -127,11 +129,13 @@ end
 % % makes figures(6) and 7
 
 
- %%  Merge NMEA GPS DATA and Sonar Data. Sonar Data is cleaned here
+ %% Step 5:  Merge NMEA GPS DATA and Sonar Data. Sonar Data is cleaned here
 % % look at lines 29 thru 81 for 3 stages of time series cleaning
 % %  look at lines 156 177 for rejection of outlier from a spatiall smoothed
 % %  solution
  keep3('survey_day','fs','fs2','odir','godir','data_dir','T2','processing_time');
+
+
 
  % enables time series despking based on median filters
   despike_on=str2num(cell2mat(T2. despike_on(2)));
@@ -152,8 +156,8 @@ end
 % % makes figures(8) to (13)
 %
 
-if 0
-%% Load PPK GNSS data
+
+%% Step 6: Load PPK GNSS data
  keep3('survey_day','fs','fs2','odir','godir','data_dir','T2')
 %  LLH data from emlid studio should be in:
 %  and PPK *.pos data in :
@@ -172,7 +176,7 @@ ppk_gpsdata_LLH_path=char(T2.ppk_gpsdata_LLH_path(2))
 % ell2ortho = 29.028 % from https://vdatum.noaa.gov/vdatumweb/
  %v ;% the Martha's Vineyard example data was processed in orthometric height
  ell2ortho =str2num(cell2mat(T2.ell2ortho(2)));
-enable_S6=str2num(cell2mat(T2.enable_S5(2)));
+enable_S6=str2num(cell2mat(T2.enable_S6(2)));
 if enable_S6
                     disp("Running Step 6")
     s6_read_emlid_LLH_PPK
@@ -222,11 +226,10 @@ xl
 
 enable_S7=str2num(cell2mat(T2.enable_S7(2)));
 if enable_S7
-     disp("Running Step 6")
+     disp("Running Step 7")
  s6_MergePPKGPS_sonar
    else
-        disp("Skipped Step 67")
+        disp("Skipped Step 7")
 end
 % % makes figures (16) to (24)
 disp('Done hit ctrl-c to exit if running complied version')
-end

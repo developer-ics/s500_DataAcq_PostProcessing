@@ -7,23 +7,27 @@ GPS=load(outname);
 GPS.pc_time_gga=datetime(GPS.pc_time_gga,'TimeZone',YF_timezone);
 %GPS.gps_utc_time=GPS.gps_utc_time+processing_time;
 
-if 1 % use the matlab bed detection from profile data..not fully supported yet
+% use the matlab bed detection from profile data..not fully supported yet
+
+
+
+
+if Use_Realtime_Bed_Detection % use the cerulean instantaenous bed detection . Not sure about delay with smoothed
+    S1=load([odir 's2_s500_DETECTED_RANGE_' fs2 '.mat']);
+    sonar_time_rp=S1.dt_txt(:)-processing_time;
+    sonar_range=S1.txt_depth(:);
+
+    ping_conf=S1.ping_conf;
+    smooth_ping_conf=S1.smooth_ping_conf;
+else
+    % use the matlab bed detection from profile data..not fully supported yet
+
     S1=load([odir  's3_profile_detections_' fs2]);
     sonar_time=S1.dt_profile(:);
     sonar_time_rp=S1.dt_profile(:)-processing_time;
-ping_conf=ones(size(sonar_time));
-smooth_ping_conf=ping_conf;
+    ping_conf=ones(size(sonar_time));
+    smooth_ping_conf=ping_conf;
     sonar_range=S1.bed_detect_range_comb(:);
-
-end
-
-if 0 % use the cerulean instantaenous bed detection . Not sure about delay with smoothed
-S1=load([odir 's2_s500_DETECTED_RANGE_' fs2 '.mat']);
-sonar_time_rp=S1.dt_txt(:)-processing_time;
-    sonar_range=S1.txt_depth(:);
-
-ping_conf=S1.ping_conf;
-smooth_ping_conf=S1.smooth_ping_conf;
 end
 
 %sonar_time_rp=S1.dt_txt(:)

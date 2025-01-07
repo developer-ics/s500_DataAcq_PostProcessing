@@ -9,8 +9,8 @@ if inpar_ent=='y'
     
    % inpar=[pwd '\InputParamMV_Oct28_2024.txt']
  %  inpar=[pwd '\InputParamMV_Nov18_2024.txt']
-   %inpar=[pwd '\InputParamMV_Dec02_2024.txt']
-     inpar=[pwd '\InputParamMV_Dec20_2024.txt']
+   inpar=[pwd '\InputParamMV_Dec02_2024.txt']
+    % inpar=[pwd '\InputParamMV_Dec20_2024.txt']
 
 
 else

@@ -23,21 +23,24 @@ sonar_ind=logical(sonar_ind);
 figure(8);clf
 
 subplot(311)
-hb=plot(sonar_range(sonar_ind),'o-b');
+hb=plot(sonar_range(sonar_ind),'.-r');
 %dsonar_range=sonar_range;
 %dsonar_range(ping_conf==0)=sonar_range(ping_conf==0);;
 %dsonar_range(ping_conf<50)=NaN;
 %sonar_range=dsonar_range;
 hold on
 plot(ping_conf(sonar_ind)./100,'.g')
-hb=plot(sonar_range(sonar_ind),'.-r');
-yaxis([prctile(sonar_range(sonar_ind),1)-.1  prctile(sonar_range(sonar_ind),99)+.5])
+%hb=plot(sonar_range(sonar_ind),'.-r');
+%yaxis([prctile(sonar_range(sonar_ind),1)-1  prctile(sonar_range(sonar_ind),99)+.5])
+yaxis([0  prctile(sonar_range(sonar_ind),99)+.5])
+
+title('red is detected data, green is ping conf (not used)')
 
 subplot(312)
 
 
 
-hb=plot(sonar_range(sonar_ind),'.-b');
+hb=plot(sonar_range(sonar_ind),'.-r');
 yaxis([prctile(sonar_range(sonar_ind),1)-.1  prctile(sonar_range(sonar_ind),99)+.5])
 
 hold on
@@ -51,13 +54,13 @@ end
 %dsonar_range=spikeRemoval(sonar_range(sonar_ind),'nbins',12, 'wnsz',300, 'nstd',0,'debug','','npass',1,'ndata',5);
 %dsonar_range=spikeRemoval(dsonar_range,'nbins',12, 'wnsz',300, 'nstd',1,'debug','','npass',3);
 
-hr=plot(dsonar_range,'.r');
+hr=plot(dsonar_range,'.b');
 
 title('1st stage of sonar data cleaning using filloutliers')
 legend([hb hr],'raw bottom dection','After 1st stage cleaning')
 
 %hr1= plot(smoothdata(filloutliers(sonar_range(sonar_ind),'linear',"movmedian",70,'threshold',1.0),20),'.-r');
-title('2nd stage of sonar data cleaning using filloutliers')
+title('1st stage of sonar data cleaning using filloutliers')
 %legend([hb1 hr1],'raw bottom dection','After 2nd stage cleaning')
 if despike_on
     rej_thr=.1;
@@ -75,7 +78,7 @@ sdsonar_range(ninds)=NaN;
 plot(sdsonar_range,'.r')
 dsonar_range(ninds)=NaN;
 clean_sonar_range=dsonar_range;
-title('3rd stage of sonar data cleaning using filloutliers..this is with low pass removed')
+title('2nd stage of sonar data cleaning using filloutliers..this is with low pass removed')
 
 
 %clean_sonar_range=dsonar_range;
@@ -86,13 +89,19 @@ sonar_dtime_utc_gps_g=sonar_dtime_utc_gps(sonar_ind);
 sonar_mtime_utc_gps_g=sonar_mtime_utc_gps(sonar_ind);
 
 %% The following lines allow manual cleaning of sonar data using the matlab brush data giu if desired
-% figure(9);clf;plot(clean_sonar_range,'.b')
-% bdata=gca().Children.YData
+brushdata=0
+if brushdata 
+    figure(9);clf;plot(clean_sonar_range,'.b')
+bdata=gca().Children.YData
+clean_sonar_range=bdata
+%Manually enter this line at prompt when done
 %save([odir 's4_brushed_data_' fs2] ,'bdata')
-%load([odir 's4_brushed_data_' fs2])
-%clean_sonar_range=bdata
+end
+previous_brushdata=0
 
-
+if previous_brushdata
+load([odir 's4_brushed_data_' fs2])
+end
 %% Scatter Plot
 %load bdata
 
@@ -107,7 +116,7 @@ loni=interp1(fillmissing(GPS.gps_utc_time,'linear'),GPS.lon,sonar_dtime_utc_gps(
 
 
 figure(10) ;clf
-clean_sonar_range(clean_sonar_range>5)=NaN;
+%clean_sonar_range(clean_sonar_range>5)=NaN;
 scatter(loni,lati,16,clean_sonar_range);
 title({'Scatter plot of merged NMEA GNSS data',' and Sonar Depths after 3 stages of cleaning','and Border for not extrapolating'} )
 xlabel('Long');ylabel("lat");
@@ -204,7 +213,7 @@ xl=xlim;
 if spatial_filter_rejection
     zc(abs(zi+clean_sonar_range)>spatial_reject_thr)=NaN; % reject outlier based on differecne with a therhold of 0.4 m from spatially smoothed results'
 end
-    %% Scatter plot of merged NMEA GNSS data and Sonar Depths after 4 stages of cleaning including spatial smoothing outlier rejection
+    %% Scatter plot of merged NMEA GNSS data and Sonar Depths after 3 stages of cleaning including spatial smoothing outlier rejection
     figure(12);clf
 
     scatter3(loni,lati,zc,12,zc,'filled');

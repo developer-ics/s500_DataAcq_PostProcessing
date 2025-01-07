@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<rsccat version="1.0" locale="en_US" product="mcr_uninstaller">
+  <message>
+    <entry key="appPanelTitle">User Application Uninstaller</entry>
+    <entry key="appPanelText">Uninstalling User Application</entry>
+    <entry key="panelTitle">MATLAB Runtime Uninstaller</entry>
+    <entry key="panelText">Uninstalling MATLAB Runtime</entry>
+  </message>
+</rsccat>

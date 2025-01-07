@@ -1,10 +1,10 @@
 clear;close('all')
 
 
-%inpar_ent='y' % hard codes y
-inpar_ent=input(['Accept default .\\InputParam.txt or enter input paramter file path\\name (y or path\\name):'] ,"s")
+inpar_ent='y' % hard codes y
+%inpar_ent=input(['Accept default .\\InputParam.txt or enter input paramter file path\\name (y or path\\name):'] ,"s")
 if inpar_ent=='y'
-    inpar=[pwd '\InputParam.txt']
+    inpar=[pwd '\InputParamBelize_Dec14_2024.txt']
 else
       inpar=inpar_ent;
 end

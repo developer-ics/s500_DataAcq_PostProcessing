@@ -1,0 +1,290 @@
+<deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
+  <configuration build-checksum="1536348243" file="F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\PostProcessingScripts_Alpha\YellowFin_Processing.prj" location="F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\PostProcessingScripts_Alpha" name="YellowFin_Processing" preferred-package-location="F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\PostProcessingScripts_Alpha\YellowFin_Processing\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+    <param.appname>YellowFin_Processing</param.appname>
+    <param.icon />
+    <param.icons />
+    <param.version>1.0</param.version>
+    <param.authnamewatermark>Peter Traykovski</param.authnamewatermark>
+    <param.email>ptraykovski@integratedcoastalsolutions.com</param.email>
+    <param.company>Integrated Coastal Solutions</param.company>
+    <param.summary />
+    <param.description />
+    <param.screenshot>${PROJECT_ROOT}\media\splash.jpg</param.screenshot>
+    <param.guid />
+    <param.installpath.string>\Integrated Coastal Solutions\YellowFin_Processing\</param.installpath.string>
+    <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
+    <param.logo />
+    <param.install.notes />
+    <param.target.install.notes />
+    <param.intermediate>${PROJECT_ROOT}\YellowFin_Processing\for_testing</param.intermediate>
+    <param.files.only>${PROJECT_ROOT}\YellowFin_Processing\for_redistribution_files_only</param.files.only>
+    <param.output>${PROJECT_ROOT}\YellowFin_Processing\for_redistribution</param.output>
+    <param.logdir>${PROJECT_ROOT}\YellowFin_Processing</param.logdir>
+    <param.enable.clean.build>false</param.enable.clean.build>
+    <param.user.defined.mcr.options />
+    <param.target.type>subtarget.standalone</param.target.type>
+    <param.support.packages />
+    <param.web.mcr>true</param.web.mcr>
+    <param.package.mcr>false</param.package.mcr>
+    <param.no.mcr>false</param.no.mcr>
+    <param.web.mcr.name>MyAppInstaller_web</param.web.mcr.name>
+    <param.package.mcr.name>MyAppInstaller_mcr</param.package.mcr.name>
+    <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
+    <param.windows.command.prompt>false</param.windows.command.prompt>
+    <param.create.log>true</param.create.log>
+    <param.log.file>YellowLog</param.log.file>
+    <param.native.matlab>false</param.native.matlab>
+    <param.checkbox>false</param.checkbox>
+    <param.example />
+    <param.help.text>Syntax 
+	  -? 
+	 
+ Input Arguments 
+	 -?  print help on how to use the application 
+	 input arguments</param.help.text>
+    <unset>
+      <param.icon />
+      <param.icons />
+      <param.version />
+      <param.summary />
+      <param.description />
+      <param.guid />
+      <param.installpath.string />
+      <param.installpath.combo />
+      <param.logo />
+      <param.install.notes />
+      <param.target.install.notes />
+      <param.intermediate />
+      <param.files.only />
+      <param.output />
+      <param.logdir />
+      <param.enable.clean.build />
+      <param.user.defined.mcr.options />
+      <param.target.type />
+      <param.support.packages />
+      <param.web.mcr />
+      <param.package.mcr />
+      <param.no.mcr />
+      <param.web.mcr.name />
+      <param.package.mcr.name />
+      <param.no.mcr.name />
+      <param.native.matlab />
+      <param.checkbox />
+      <param.example />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}\run_all_scripts.m</file>
+    </fileset.main>
+    <fileset.resources />
+    <fileset.package>
+      <file>${PROJECT_ROOT}\s1_readNMEAfiles.m</file>
+      <file>${PROJECT_ROOT}\s2_read_s500sonar.m</file>
+      <file>${PROJECT_ROOT}\s3_Intensity_profile_bed_detection.m</file>
+      <file>${PROJECT_ROOT}\s4_Set_start_end_time_sync.m</file>
+      <file>${PROJECT_ROOT}\s5_MergeNMEA_GPS_s500.m</file>
+      <file>${PROJECT_ROOT}\s6_read_emlid_LLH_PPK.m</file>
+      <file>${PROJECT_ROOT}\s7_MergePPKGPS_sonar.m</file>
+    </fileset.package>
+    <fileset.depfun>
+      <file>${PROJECT_ROOT}\s1_readNMEAfiles.m</file>
+      <file>${PROJECT_ROOT}\s2_read_s500sonar.m</file>
+      <file>${PROJECT_ROOT}\s3_Intensity_profile_bed_detection.m</file>
+      <file>${PROJECT_ROOT}\s4_Set_start_end_time_sync.m</file>
+      <file>${PROJECT_ROOT}\s5_MergeNMEA_GPS_s500.m</file>
+      <file>${PROJECT_ROOT}\s6_read_emlid_LLH_PPK.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\clean0.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\hmf.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\keep3.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\near.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\OpenEarth\db\format</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\OpenEarth\matlab\general\plot_fun\hillshade.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\RegularizeData3D\RegularizeData3D.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\acv.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\aggregate.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\all.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\and.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\any.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\arcslope.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\aspect.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\castshadow.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\cellarea.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\clip.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\contour.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\coord2ind.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\coord2sub.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\createmask.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\crop.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\curvature.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\demarea.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\demprofile.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\diffusion.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\dilate.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\dist2curve.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\dist2line.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\distance.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\elevateminima.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\eq.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\erode.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\evansslope.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\excesstopography.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\fillsinks.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\filter.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\find.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\findcoord.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\ge.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\getcoordinates.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\getextent.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\getoutline.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\gradient8.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\griddedcontour.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\GRIDobj.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\GRIDobj2ascii.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\GRIDobj2geotiff.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\GRIDobj2im.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\GRIDobj2mat.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\GRIDobj2pm.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\GRIDobj2polygon.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\GRIDobj2rgb.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\gt.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\hillshade.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\histogram.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\hypscurve.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\identifyflats.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\imagesc.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\imageschs.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\ind2coord.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\info.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\inpaintnans.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\interp.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\interp2GRIDobj.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\interpwithbarriers.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\isnan.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\ksdensity.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\ldivide.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\le.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\line2GRIDobj.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\localtopography.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\log.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\log10.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\log2.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\lt.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\max.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\measure.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\min.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\minmaxnorm.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\minus.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\mpower.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\mrdivide.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\mtimes.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\ne.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\not.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\or.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\pad.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\plus.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\polygon2GRIDobj.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\postprocflats.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\power.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\prcclip.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\private\builtincaller.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\private\rasterread.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\private\rasterwrite.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\private\refmat2XY.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\project.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\prominence.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\rand.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\randomsample.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\rdivide.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\reclabel.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\reclassify.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\reproject2utm.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\resample.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\roughness.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\shufflelabel.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\snap2stream.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\sqrt.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\sub2coord.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\surf.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\tanakacontour.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\tanakacontourLL.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\times.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\toposhielding.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\uminus.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\uplus.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\validatealignment.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\xor.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\@GRIDobj\zscore.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\colormaps\flowcolor.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\GIStools\dpsimplify.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\utilities\coord2ind.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\utilities\getdistance.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\utilities\getextent.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\utilities\interpline.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\utilities\ixneighbors.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\topotoolbox_master\utilities\multilevel_otsu.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\xzoom.m</file>
+      <file>F:\GDriveWHOI\My Drive\Matools\yaxis.m</file>
+    </fileset.depfun>
+    <build-deliverables>
+      <file location="${PROJECT_ROOT}\YellowFin_Processing\for_testing" name="splash.png" optional="false">F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\PostProcessingScripts_Alpha\YellowFin_Processing\for_testing\splash.png</file>
+      <file location="${PROJECT_ROOT}\YellowFin_Processing\for_testing" name="YellowFin_Processing.exe" optional="false">F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\PostProcessingScripts_Alpha\YellowFin_Processing\for_testing\YellowFin_Processing.exe</file>
+      <file location="${PROJECT_ROOT}\YellowFin_Processing\for_testing" name="readme.txt" optional="true">F:\GDriveICS\My Drive\IntegratedCoastalSolutions\Github\s500_DataAcq_PostProcessing\PostProcessingScripts_Alpha\YellowFin_Processing\for_testing\readme.txt</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\Program Files\MATLAB\R2023b</root>
+      <toolboxes>
+        <toolbox name="matlabcoder" />
+        <toolbox name="embeddedcoder" />
+        <toolbox name="gpucoder" />
+        <toolbox name="fixedpoint" />
+        <toolbox name="matlabhdlcoder" />
+        <toolbox name="neuralnetwork" />
+      </toolboxes>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
+      </toolbox>
+      <toolbox>
+        <embeddedcoder>
+          <enabled>true</enabled>
+        </embeddedcoder>
+      </toolbox>
+      <toolbox>
+        <gpucoder>
+          <enabled>true</enabled>
+        </gpucoder>
+      </toolbox>
+      <toolbox>
+        <fixedpoint>
+          <enabled>true</enabled>
+        </fixedpoint>
+      </toolbox>
+      <toolbox>
+        <matlabhdlcoder>
+          <enabled>true</enabled>
+        </matlabhdlcoder>
+      </toolbox>
+      <toolbox>
+        <neuralnetwork>
+          <enabled>true</enabled>
+        </neuralnetwork>
+      </toolbox>
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.0</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>

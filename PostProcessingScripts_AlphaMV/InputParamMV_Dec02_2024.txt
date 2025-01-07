@@ -1,0 +1,61 @@
+variable, notes-units,value
+survey_day,(year/month/day) UTC ,2024/12/02
+%data_dir,string,D:\odrive\Google Drive  WHOI\A_Projects\SERDP\SERDP23_25Project\2025_fall_deploy\Surveys\s11-18-2024\YF_USVRover
+data_dir,string,F:\GDriveWHOI\My Drive\A_Projects\SERDP\SERDP23_25Project\2025_fall_deploy\Surveys\s12-02-2024\YF_USV_ROVER
+
+%*************************** 
+enable_S1,enables step 1- read NMEA GPS data,0
+
+%***************************
+enable_S2,enables step 2-  reads s500 sonar data,0
+echo_profile,boolean - enables processing of echo intensity,0
+system_default_sound_speed,m/s (set in sonar usually don't change),1500
+measured_sound_speed,m/s,1470
+use_txt_depth_string,1 for older s500 firmware - 0 otherwise,0
+
+%***************************
+enable_S3,enables step 3-  Intensity_profile_bed_detection - requires echo_profile=1 ,0
+
+
+%***************************
+enable_S4,enables step 4-  Set Start and End time for processing and assign NMEA GGA sentence based time stamps to sonar data,0
+Use_Realtime_Bed_Detection, Uses s500 built in realtime bed detection. set to 0 to use results from step 3,1
+% if these lines exist it will force a start and end time for processing
+use_forced_time,use the times below,0
+%start_time_forced, time 1 UTC,2024/12/17 17:50:00
+%end_time_forced,time 2 UTC,2024/10/17 19:04:00
+% if they don't exist or commented out then program tires to automatically et start and end based on data 
+GPS_thresh,elevation threshold for determining start and end time (m),2
+SONAR_thresh,Sonar bed detection  std threshold for determining start and end time (m),4
+sonar_start_time_adjust,delay the start time of data procssing (minutes),0
+sonar_end_time_adjust,advance the start time of data procssing (minutes),0
+processing_time,raspberry pi processing delay-usually don't change,0.7
+YF_timezone,raspberry pi time zone on Yellow Fin - usually UTC,00:00
+%exclusion_start, time 1 UTC,2024/10/02 00:50:00
+%exclusion_end, time 2 UTC ,2024/10/02 01:09:00
+
+%***************************
+enable_S5,enables step 5-  Merge NMEA GPS DATA and Sonar Data - Sonar Data is cleaned here,0
+despike_on,enables time series despking based on median filters,1
+make_maps,enables mapping output during step 4,1
+spatial_filter_rejection,enables rejection of points spatial_reject_thr above or below away from smoothed spatial surface,0
+spatial_reject_thr,thershold for spatial_filter_rejection (m),.3
+
+%***************************
+enable_S6,enables step 6-  Load PPK GNSS data,15:54 PM 12/9/2024
+ppk_gpsdata_pos_path,string with  path relative to data_dir and file name of pos file,F:\GDriveWHOI\My Drive\A_Projects\SERDP\SERDP23_25Project\2025_fall_deploy\Surveys\s12-02-2024\YF_USV_ROVER\Reach_r0_20241202154337\Dec_02_YF\export\ascii-output.txt
+ppk_gpsdata_LLH_path,string with  path relative data_dir  and file name of  LLH file,\Reachr0_20230505160754\Reachr0_solution_20230505160754.LLH
+ell2ortho, used to convert ellopsiodal height data to orthometric - the MV example data was processed in orthometric height so 0 ,0
+
+%***************************
+enable_S7,enables step 7-  Merge PPK GNSS data with  Sonar Data,1
+use_resync,set to 1 to engage clock re-syncing based on gps-sonar heave data correletation,1
+gps_leap_offset,should be 18 (seconds),0
+sync_vert_offset,to make figure(20)  red (gps) and blue (sonar) line overlap vertically for visual inspection of corelation with use_resync =1 (m),-6 
+start_sync_time,start of resyncing period - should be flat bed with waves ,2024/12/02 16:24:00
+end_sync_time, year/month/day hh:mm:ss,2024/12/02 16:26:00
+include_beach_rover,option to include beach rover data in map product,1
+%beach_rover_data_path,path to beach rover data, D:\odrive\Google Drive  WHOI\A_Projects\SERDP\SERDP23_25Project\2025_fall_deploy\Surveys\s11-18-2024\Walking_Rover\Walking_rover\export\ascii-output_local_base.txt
+
+beach_rover_data_path,path to beach rover data, F:\GDriveWHOI\My Drive\A_Projects\SERDP\SERDP23_25Project\2025_fall_deploy\Surveys\s12-02-2024\Walking_Rover\Dec_02_walkingRover\export\ascii-output.txt
+make_maps_ppk,enables mapping output with ppk heave compensation during step 6,1

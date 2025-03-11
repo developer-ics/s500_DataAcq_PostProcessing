@@ -59,7 +59,7 @@ title('Sonar depth')
 
 
 
-start_ind_gps=find(GPS.altMSL(100:end)<GPS_thresh,1,'first')+100;
+start_ind_gps=find(GPS.altMSL(1:end)<GPS_thresh,1,'first');
 start_time_gps=GPS.gps_utc_time(start_ind_gps)+seconds(30); %offset till the boat is in the water
 end_ind_gps=length(GPS.gps_utc_time)-find(GPS.altMSL(end:-1:1)<GPS_thresh,1,'first');
 end_time_gps=GPS.gps_utc_time(end_ind_gps)-seconds(30);; %offset from when the boat boat left  the water

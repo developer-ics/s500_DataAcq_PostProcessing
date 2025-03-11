@@ -1,8 +1,8 @@
 
-PPKGPS=load([odir 's5_PPK_GNSS_DATA_' fs2]);
+PPKGPS=load([odir 's6_PPK_GNSS_DATA_' fs2]);
 %PPKGPS=load([odir 's5_Qintertia_PPK_GNSS_DATA_' fs2]);
 S1=load([odir 's4_Cleaned_synced_s500_data_' fs2]);
-load([odir 's3_START_END_TIMES_' fs2]);
+load([odir 's4_START_END_TIMES_' fs2]);
 
 outname=[odir 's1_NMEA_GNSS_DATA_' fs2];
 GPS=load(outname);
@@ -49,6 +49,8 @@ yl =ylim;
 xaxis(xl)
 
 
+
+
 % another time sync here by correlating time
 figure(21);clf
 ws1=near(PPKGPS.datetime_ppk_g,xl(1));
@@ -92,31 +94,47 @@ plot(chc-shifted_sonar_range_i(ws1:ws2)')
 %%
 
 figure(22) ;clf
-scatter(PPKGPS.lon_ppk,PPKGPS.lat_ppk,16,shifted_sonar_range_i)
-cc=turbo;
-cc=flipud(cc);
-colormap(cc)
-colorbar
-hold on
+geoscatter(PPKGPS.lat_ppk,PPKGPS.lon_ppk,14,-shifted_sonar_range_i,'filled')
+
 %caxis([2 13])
 
-%%
+
+    view(2);
+    colorbar;
+  %  caxis([prctile(zc,1) prctile(zc,99)]);
+ colormap(cmocean('topo'))
+        caxis([-8 8]);
+geobasemap satellite
+    print('-dpng',[godir 's6_Track_only_re_WaterSurface'  fs2]);
+
+
+    %%
+    PPK_UTCDateTime=PPKGPS.datetime_ppk_g(:)-gps_total_offset;
+
+    itide_z=interp1(PPKGPS.tide_t,PPKGPS.tide_z,PPK_UTCDateTime);
+    %%
 gpsantenna_offset_waterline=.15;
 sonar_waterline_offset=.10;%sonar to waterline
 x=PPKGPS.lon_ppk;
 y=PPKGPS.lat_ppk;
-z=-shifted_sonar_range_i(:)+PPKGPS.clean_height_datum_ppk-(sonar_waterline_offset+gpsantenna_offset_waterline);
+%z=-shifted_sonar_range_i(:)+PPKGPS.clean_height_datum_ppk-(sonar_waterline_offset+gpsantenna_offset_waterline);
 %
 
 longitude=x;latitude=y;
 z_water_surf=-(shifted_sonar_range_i(:) +sonar_waterline_offset);
 z_gps_datum=PPKGPS.clean_height_datum_ppk(:);
 z_seafloor_datum=z_water_surf  + z_gps_datum - sonar_waterline_offset;
+z_seafloor_tide_datum=z_water_surf  +  itide_z - sonar_waterline_offset;
+z=z_seafloor_tide_datum;
 
-To=table(longitude(:),latitude(:),z_seafloor_datum(:),z_water_surf(:),z_gps_datum(:));
+
+To=table(PPK_UTCDateTime,longitude,latitude,z_seafloor_datum,z_water_surf,z_gps_datum,z_seafloor_tide_datum);
 writetable(To,[odir 'PPK_Heave_Corrected_Trackline_Data' fs2 '.txt'])
 
+save([odir 's7_Track_data_PPK_Corrected_' fs2],'To')
 
+figure(30);clf
+plot(PPK_UTCDateTime,z_water_surf,'.')
 if make_maps_ppk
     %%
 
@@ -126,7 +144,7 @@ if make_maps_ppk
 
     % RegularizeData3D needs to be downloaded from the matlab file exchange
     %
-    figure(22);clf
+    figure(23);clf
     scatter3(x,y,z,12,z,'filled');
     view(2)
     hold on
@@ -153,6 +171,9 @@ title('PPK GNSS Heave Corrected Trackline Data with boundary for fitting')
 
 
     sff= 6e-04;
+        sff= 3e-04;
+        sff= 1e-04;
+
      %  sff=3e-04;
     [Zg3,Xg3,Yg3]=RegularizeData3D(x ,y,z,xnodes,ynodes,'smoothness',sff);
     [m,n]=size(Zg3);
@@ -164,7 +185,7 @@ title('PPK GNSS Heave Corrected Trackline Data with boundary for fitting')
     DEM=GRIDobj(Xg3,Yg3,Zg3.*BW);
     set(gca,'dataaspectratio',[1 1 1])
     %%
-    figure(23);clf
+    figure(24);clf
     pf=.0015;
     [A,RA,attribA] = readBasemapImage("satellite",[min(ynodes)-pf max(ynodes)+pf],[min(xnodes)-pf max(xnodes)+pf],20);
     mapshow(A,RA);
@@ -234,7 +255,7 @@ title('PPK GNSS Heave Corrected Trackline Data with boundary for fitting')
 
 
     %%
-    fn=[ 's6_PPK_GPS_DEM_' fs2 '.tif'];
+    fn=[ 's6_MSL_TideDatum_DEM_r' fs2 '.tif'];
     save([odir fn(1:end-4), 'DEM'])
 
 

@@ -86,13 +86,15 @@ sonar_dtime_utc_gps_g=sonar_dtime_utc_gps(sonar_ind);
 sonar_mtime_utc_gps_g=sonar_mtime_utc_gps(sonar_ind);
 
 %% The following lines allow manual cleaning of sonar data using the matlab brush data giu if desired
-% figure(9);clf;plot(clean_sonar_range,'.b')
+% figure(9);clf;plot(clean_sonar_range,'.-b')
 % bdata=gca().Children.YData
 %save([odir 's4_brushed_data_' fs2] ,'bdata')
+
+
 %load([odir 's4_brushed_data_' fs2])
-%clean_sonar_range=bdata
+%clean_sonar_range=bdata;
 
-
+clean_sonar_range(clean_sonar_range<.75)=NaN;
 %% Scatter Plot
 %load bdata
 
@@ -124,7 +126,7 @@ print('-dpng',[godir 's4_Initial Scatter Plot Survey' fs2]);
 
 longitude=loni;
 latitude=lati;
-depth_from_xducer_no_heave_comp=clean_sonar_range;
+depth_from_xducer_no_heave_comp=clean_sonar_range(:);
 sonar_time=sonar_dtime_utc_gps_g;
 To=table(sonar_time,longitude,latitude,depth_from_xducer_no_heave_comp);
 writetable(To,[odir 'No_Heave_Correction_Trackline_Data' fs2 '.txt'])
@@ -150,7 +152,7 @@ if make_maps
     xnodes=(min(x)-gdx):dx:(max(x)+gdx);
     ynodes=(min(y)-gdx):dx:(max(y)+gdx);
 
-    sff= .2e-04;
+    sff= .05e-04;
  %       sff= 20e-04;
 
     [Zg3,Xg3,Yg3]=RegularizeData3D(x ,y,z,xnodes,ynodes,'smoothness',sff);
@@ -165,12 +167,15 @@ if make_maps
     %     scatter(x(fit_inds),y(fit_inds),12,z(fit_inds),'or');
     %     pause(.1)
     % end
-    k=boundary(x,y,.7);%this makes the border/mask for not extrapolating
+    sf=10
+    xsf=x(1:sf:end);
+   ysf=y(1:sf:end);
+    k=boundary(xsf,ysf,.5);%this makes the border/mask for not extrapolating
     figure(10);hold on
-    plot(x(k),y(k),'k','linewidth',3);
+    plot(xsf(k),ysf(k),'k','linewidth',3);
     if 1
         [m,n]=size(Zg3);
-        BW=roipoly(Xg3(1,:),Yg3(:,1),Zg3,x(k),y(k));
+        BW=roipoly(Xg3(1,:),Yg3(:,1),Zg3,xsf(k),ysf(k));
         BW=double(BW);
         BW(BW==0)=NaN;
     end
@@ -204,10 +209,13 @@ end
     %% Scatter plot of merged NMEA GNSS data and Sonar Depths after 4 stages of cleaning including spatial smoothing outlier rejection
     figure(12);clf
 
-    scatter3(loni,lati,zc,12,zc,'filled');
+    geoscatter(lati,loni,12,zc,'filled');
     view(2);
     colorbar;
-    caxis([prctile(zc,1) prctile(zc,99)]);
+  %  caxis([prctile(zc,1) prctile(zc,99)]);
+ colormap(cmocean('topo'))
+        caxis([-8 8]);
+geobasemap satellite
     clean_sonar_range=-zc;;
 title({'Final  Scatter plot of merged NMEA GNSS data',' and Sonar Depths after 4 stages of cleaning','Holes tend to be regions of consistent wave breaking'} )
     %% Contour plot
@@ -217,7 +225,10 @@ title({'Final  Scatter plot of merged NMEA GNSS data',' and Sonar Depths after 4
    cm2=flipud(pink(40));
   cm=[cm1(1:58,:);(cm2(6:40,:))];
   zlim=[prctile(zc,1)-1, prctile(zc,99)+1];
-    tanakacontour(DEM,[zlim(1):.05:zlim(2)]);
+  zlim(1)=-8
+ % tanakacontourLL(DEM,[zlim(1):.05:zlim(2)]);
+imagesc(DEM);
+
     caxis(zlim);
     title(['YellowFin survey ' fs ]);
     hold on;
@@ -243,7 +254,7 @@ title({'Final  Scatter plot of merged NMEA GNSS data',' and Sonar Depths after 4
     GRIDobj2geotiff(DEM,[godir fn])	;
 
 
-    geotiffwrite([godir fn],A,R,'CoordRefSysCode',4269);
+%    geotiffwrite([godir fn],A,R,'CoordRefSysCode',4269);
 end
 
     save([odir 's4_Cleaned_synced_s500_data_' fs2],'clean_sonar_range','sonar_dtime_utc_gps_g','sonar_mtime_utc_gps_g')

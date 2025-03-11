@@ -13,8 +13,8 @@ set(gca,'ydir','rev')
 title('Raw_profile_data - Use this to set blanking and max range','Interpreter','none')
  ylabel('Depth (m)');xlabel('Time (hh:mm)')
 %%
-blank_r=.4;
-max_r=1.8;
+blank_r=1;
+max_r=8;
 blank_ind=near(range_bins,blank_r);
 max_ind=near(range_bins,max_r);
 %%
@@ -47,7 +47,7 @@ title('hybrid median filtered profile_data - with blanking and max range applied
     figure(103);clf
 
 subplot(211)
-int_prct_thresh_val=93;
+int_prct_thresh_val=96;
     thr=prctile(filt_prof_data,int_prct_thresh_val);
     [m,n]=size(filt_prof_data);
     for ii =1:n

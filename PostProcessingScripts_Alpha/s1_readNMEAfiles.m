@@ -9,8 +9,12 @@ end
 ji=0;
 ji2=1
 pnmea = nmeaParser("MessageIDs", 'GGA')
+pnmeaRMC = nmeaParser("MessageIDs", 'RMC')
+
 for fi=2:length(dd) %
     disp([dirstr1 '\' dd(fi).name])
+   
+
     %fid=fopen([dirstr dd(fi).name]);
     lns=readlines([dirstr1 '\' dd(fi).name]);
     for ii=1:length(lns);
@@ -70,8 +74,17 @@ for fi=2:length(dd) %
 
             elseif navtoolbox
                 ggaData=pnmea(nmdata);
-       
-                if ggaData.Status==0
+                rmcData=pnmeaRMC(nmdata);
+                if rmcData.Status==0
+                    rmcday=day(rmcData.UTCDateTime);
+                    rmcmonth=month(rmcData.UTCDateTime);
+                    rmcyear=year(rmcData.UTCDateTime);
+               % elseif rmcData.Status==2
+                  %   rmcday=17;
+                  %  rmcmonth=10;
+                  %  rmcyear=2024;
+                end
+               if ggaData.Status==0&exist('rmcday')
                     ji=ji+1;
                     gps_utc_time(ji)=datetime(ggaData.UTCTime,'TimeZone','UTC');% this is UTC
 
@@ -81,9 +94,10 @@ for fi=2:length(dd) %
                     altMSL(ji)=ggaData.Altitude;
                     GeoidSeparation(ji)=ggaData.GeoidSeparation;
                     pc_time_gga(ji)=dt(ii);% this is pc(rasbpi) time when gga sentences are recived
-                    gps_utc_time(ji).Day=day(dt(ii));
-                    gps_utc_time(ji).Month=month(dt(ii));
-                    gps_utc_time(ji).Year=year(dt(ii));
+                    gps_utc_time(ji).Day=rmcday;
+                    gps_utc_time(ji).Month=rmcmonth;
+                    gps_utc_time(ji).Year=rmcyear;
+
 
 
                 end

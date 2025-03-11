@@ -1,7 +1,7 @@
 
 
 
-load([odir 's3_START_END_TIMES_' fs2 '.mat'])
+load([odir 's4_START_END_TIMES_' fs2 '.mat'])
 
 %% Read LLH File
 

@@ -14,8 +14,10 @@ for ii=1:length(dd)
 end
 %%
 ij=0;i3=0;
+
+profile_data=zeros(length(dd).*500,2222);%just aguess for now
 for fi=1:length(dd) %5  20201218-101925265.bin ios new 500 khz
-    disp([dirstr2 '\' dd(fi).name])
+    disp([num2str(fi) ': ' dirstr2 '\' dd(fi).name])
     fid=fopen( [dirstr2 '\' dd(fi).name]);
 
     frewind(fid);

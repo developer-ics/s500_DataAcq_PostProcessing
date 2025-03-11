@@ -4,7 +4,13 @@ clear;close('all')
 inpar_ent='y' % hard codes y
 %inpar_ent=input(['Accept default .\\InputParam.txt or enter input paramter file path\\name (y or path\\name):'] ,"s")
 if inpar_ent=='y'
-    inpar=[pwd '\InputParamBelize_Dec14_2024.txt']
+   %inpar=[pwd '\InputParamMAJd1.txt']
+      %inpar=[pwd '\InputParamAshuFRFrefit.txt']
+     % inpar=[pwd '\InputParamMAJd3a.txt']
+      inpar=[pwd '\InputParamMarconi_feb26_2025.txt']
+
+       %inpar=[pwd '\InputParamMV_Oct28_2024.txt']
+
 else
       inpar=inpar_ent;
 end
@@ -22,11 +28,12 @@ survey_day=datetime(T2.survey_day(2),'InputFormat','uuuu/MM/dd')
 fs=char(datetime(survey_day,'Format','MM-dd-yyyy'));
 fs2=char(datetime(survey_day,'Format','yyyyMMdd'));
 
+suffix=char(T2.suffix(2))
 %addpath('F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Yellowfin\ExampleDataPro\ProcessingScripts')
 %data_dir='F:\GDriveICS\My Drive\IntegratedCoastalSolutions\SoftwareDevelopment\Yellowfin\ExampleDataPro\MVLPData'
 data_dir=char(T2.data_dir(2))
-odir=[data_dir '\matfiles_'  fs2 '\'];% location of matfiles that are stored in processing
-godir=[data_dir '\image_files_'  fs2 '\'];% location of  graphicsfiles that are generated in processing
+odir=[data_dir '\matfiles_'  fs2 suffix '\'];% location of matfiles that are stored in processing
+godir=[data_dir '\image_files_'  fs2 suffix '\'];% location of  graphicsfiles that are generated in processing
 mkdir(odir)
 mkdir(godir)
 %% Step 1: reads NMEA gps data written to rasbpi logger
@@ -86,7 +93,16 @@ end
 %  this should eliminate any issues with data logger time set incorrectly
  keep3('survey_day','fs','fs2','odir','godir','data_dir','T2');
 % % GPS based start is when gps drops below GPS_thresh m MSL, end is when goes above GPS_thresh m MSL
-  Use_Realtime_Bed_Detection=str2num(cell2mat(T2.Use_Realtime_Bed_Detection(2)));
+ 
+
+
+Use_Realtime_Bed_Detection=str2num(cell2mat(T2.Use_Realtime_Bed_Detection(2)));
+use_forced_time=str2num(cell2mat(T2.use_forced_time(2)));
+%use_forced_time=0
+if use_forced_time
+start_time_forced=datetime(T2.start_time_forced(2),'InputFormat','uuuu/MM/dd HH:mm:ss','TimeZone','UTC')
+end_time_forced=datetime(T2.end_time_forced(2),'InputFormat','uuuu/MM/dd HH:mm:ss','TimeZone','UTC')
+end
 
  GPS_thresh=str2num(cell2mat(T2.GPS_thresh(2)));
 
@@ -179,7 +195,7 @@ ppk_gpsdata_LLH_path=char(T2.ppk_gpsdata_LLH_path(2))
 enable_S6=str2num(cell2mat(T2.enable_S6(2)));
 if enable_S6
                     disp("Running Step 6")
-    s6_read_emlid_LLH_PPK
+    s6_read_Qinertia_PPK_and_tides
     else
         disp("Skipped Step 6")
 end
@@ -227,7 +243,7 @@ xl
 enable_S7=str2num(cell2mat(T2.enable_S7(2)));
 if enable_S7
      disp("Running Step 7")
- s6_MergePPKGPS_sonar
+ s7_MergePPKGPS_sonar
    else
         disp("Skipped Step 7")
 end
